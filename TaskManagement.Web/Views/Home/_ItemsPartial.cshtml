@@ -1,0 +1,33 @@
+﻿@model IEnumerable<TaskManagement.Application.DTOs.TaskTableDTO>
+@{
+}
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-3">
+            <div class="card" style="width: 18rem;">
+                <dvi class="card-header bg-primary">
+                    <h5 class="text-white">
+                        @item.Status
+                    </h5>
+                </dvi>
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <span class=" bg-info text-dark">Priority: @item.priority</span>
+                        </div>
+                        <div class="col-6">
+                            <span class=" bg-warning text-dark">Due: @item.DueDate.ToShortDateString()</span>
+                        </div>
+                    </div>
+                    <div class="border-black">
+                    <p class="card-text ">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
