@@ -1,0 +1,32 @@
+﻿/* Sidebar transition */
+#sidebar {
+    transition: width 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Collapsed state */
+.sidebar-collapsed {
+    width: 80px !important;
+}
+
+    /* Hide text when collapsed */
+    .sidebar-collapsed .sidebar-text {
+        display: none;
+    }
+
+    /* Center icons when collapsed */
+    .sidebar-collapsed .nav-link {
+        justify-content: center;
+    }
+
+#sidebar .nav-link.active {
+    background-color: #0d6efd; /* Bootstrap primary */
+    color: white;
+}
+
+    #sidebar .nav-link.active i {
+        color: white;
+    }
+
+

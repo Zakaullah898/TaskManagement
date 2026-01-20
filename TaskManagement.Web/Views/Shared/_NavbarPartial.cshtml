@@ -1,0 +1,13 @@
+﻿<nav class="navbar navbar-expand-* navbar-toggleable-sm navbar-light bg-light border-bottom box-shadow">
+    <div class="container-fluid">
+        <div class="navbar-brand">
+            <h1 class="h3 mb-0 LogoFont">Task Management System</h1>
+        </div>
+        
+        @if (!User.Identity!.IsAuthenticated)
+        {
+            <a class="navbar-brand" asp-area="" asp-controller="Auth" asp-action="Login">Signin</a>  
+        }
+
+    </div>
+</nav>

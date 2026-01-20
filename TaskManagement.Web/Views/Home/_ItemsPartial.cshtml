@@ -5,29 +5,53 @@
     @foreach (var item in Model)
     {
         <div class="col-3">
-            <div class="card" style="width: 18rem;">
+            <div class="card @(item.IsDeleted ? "bg-light opacity-50 pe-none" : "none")" style="width: 18rem;" aria-disabled="true">
                 <dvi class="card-header bg-primary">
-                    <h5 class="text-white">
-                        @item.Status
-                    </h5>
+                    <div class="row">
+                        <div class="col-6 text-white">@item.Status</div>
+                        <div class="col-6 text-white text-end">
+                            <div class="dropdown ">
+                                <i 
+                                    class="bi bi-three-dots-vertical"
+                                    type="button" 
+                                    data-bs-toggle="dropdown"
+                                   aria-expanded="true"
+                                ></i>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-card">
+                                    <li><a class="dropdown-item" href="#">Assign Task</a></li>
+                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </dvi>
                 <div class="card-body">
                     <h5 class="card-title">@item.Title</h5>
                     <div class="row">
-                        <div class="col-6">
-                            <span class=" bg-info text-dark">Priority: @item.priority</span>
+                        <div class="col-12">
+
+                            <span class="text-secondary">Priority: @item.priority</span>
                         </div>
-                        <div class="col-6">
-                            <span class=" bg-warning text-dark">Due: @item.DueDate.ToShortDateString()</span>
+                        <div class="col-12">
+                            <span class="text-secondary">Created At: @item.CreatedAt.ToShortDateString()</span>
                         </div>
                     </div>
-                    <div class="border-black">
-                    <p class="card-text ">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                    @* <hr /> *@
+                    <div class="border-top">
+                    <p class="card-text ">@item.Description</p>
                     </div>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+   
+                    
                 </div>
             </div>
         </div>
 
     }
+
 </div>
+@section Scripts {
+    <script src="~/js/site.js" asp-append-version="true"></script>
+}
+
