@@ -50,7 +50,7 @@ namespace TaskManagement.Web.Controllers
                 model.CreatedByUserId = userId;
                 model.UpdatedAt = DateTime.Now;
                 model.Status = "New";
-                model.IsDeleted = true;
+                model.IsDeleted = false;
                 model.CreatedAt = DateTime.Now;
 
                 if (ModelState.IsValid)

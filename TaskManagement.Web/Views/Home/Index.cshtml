@@ -21,21 +21,5 @@
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com"></script>
-    <script>
-        $(document).ready(function () {
-            // Call the GetItems action method using AJAX
-            $.ajax({
-                url: '@Url.Action("GetAllTasks", "Home")', // URL to the GET method
-                type: 'GET',
-                success: function (data) {
-                    // On success, insert the returned HTML (partial view content) into the container
-                    $('#task-item').html(data);
-                },
-                error: function () {
-                    alert('Error loading items.');
-                }
-            });
-        });
-    </script>
+    <script src="~/js/taskCard.js" asp-append-version="true"></script>
     }

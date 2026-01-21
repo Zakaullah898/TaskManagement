@@ -11,7 +11,7 @@ sidebar.addEventListener('mouseleave', () => {
     dropdownElement.classList.remove('show');
     dropdownElement.setAttribute('aria-expanded', 'false');
 });
-console.log('Sidebar hover functionality loaded', sidebar);
+//console.log('Sidebar hover functionality loaded', sidebar);
 // Active link highlighting
 const menuLinks = document.querySelectorAll('#sidebarMenu .nav-link');
 
