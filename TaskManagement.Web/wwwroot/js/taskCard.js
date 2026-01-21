@@ -22,7 +22,76 @@ function loadTasks() {
             console.log("Card-class", cardDropdown)
         },
         error: function () {
-            alert('Error loading items.');
+            //alert('.');
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error loading items',
+                icon: 'AlertType',
+                confirmButtonText: 'OK'
+            });
         }
     });
 }
+
+
+
+// Method for calling delete method
+function conformationDelete(taskId) {
+    if (taskId > 0) {
+        console.log("task Id", taskId)
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log("TaskId", taskId)
+
+                fetch(`/Home/DeleteTask?id=${taskId}`, {
+                    method: 'PUT'
+
+                }).then(response => {
+                    if (response.ok) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Task moved to recycle bin',
+                            'success'
+                        ).then(() => {
+                            location.reload(); // Reload the page to reflect changes
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Error deleting item',
+                            icon: 'AlertType',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Error deleting item',
+                        icon: 'AlertType',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Missing Id',
+            icon: 'AlertType',
+            confirmButtonText: 'OK'
+        })
+    }
+}
+
+

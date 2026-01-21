@@ -12,7 +12,7 @@ namespace TaskManagement.Domain.Interfaces
         Task<List<T>> GetAllAsync();
         Task<T> GetAsync(Expression<Func<T, bool>> Filter, bool UseNoTracking = false);
         Task<bool> CreateAsync(T entity);
-        Task<T> UpdateAsync(T entity);
+        Task<bool> UpdateAsync(T entity);
         Task<T> DeleteAsync(Expression<Func<T, bool>> Filter);
     }
 }

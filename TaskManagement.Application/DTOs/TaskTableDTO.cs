@@ -8,6 +8,7 @@ namespace TaskManagement.Application.DTOs
 {
     public class TaskTableDTO
     {
+        public int TaskId  { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? priority { get; set; }

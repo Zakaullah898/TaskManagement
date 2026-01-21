@@ -8,8 +8,12 @@ namespace TaskManagement.Domain.Interfaces
 {
     public interface ITaskService
     {
+        Task<TaskTable> GetTaskById(int id);
         Task<IEnumerable<TaskTable>> GetAllTasks();
         Task<bool> CreateTask(TaskTable model);
+        Task<bool> UpdateTask(TaskTable model);
+        Task<bool> Delete(int id);
+
 
     }
 }

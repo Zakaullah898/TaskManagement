@@ -6,9 +6,18 @@
     {
         <div class="col col-sm-6 col-lg-4 col-xl-3 g-3">
             <div class="card @(item.IsDeleted ? "bg-light opacity-50 pe-none" : "none")" style="width: 15rem;" aria-disabled="@(item.IsDeleted ? true: false)">
-                <div class="card-header bg-primary">
+                <div class="card-header  @(item.IsDeleted ? "bg-danger" : "bg-primary")">
                     <div class="row">
-                        <div class="col-6 text-white">@item.Status</div>
+                        <div class="col-6 text-white ">
+                            @if(item.IsDeleted)
+                            {
+                                <i class="bi bi-trash3-fill"></i>
+                            }
+                            else{
+
+                              @item.Status
+                            }
+                            </div>
                         <div class="col-6 text-white text-end">
                             <div class="dropdown ">
                                 <i 
@@ -19,8 +28,8 @@
                                 ></i>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-card">
                                     <li><a class="dropdown-item" href="#">Assign Task</a></li>
-                                    <li><a class="dropdown-item" href="#">Edit</a></li>
-                                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Home" asp-action="UpdateTask" asp-route-id="@item.TaskId">Edit</a></li>
+                                    <li><button class="dropdown-item" onclick="conformationDelete(@item.TaskId)">Delete</button></li>
                                 </ul>
                             </div>
                         </div>

@@ -39,6 +39,29 @@ namespace TaskManagement.Web.Controllers
         {
             return View();
         }
+        // updating Tasks view 
+        [HttpGet]
+        public IActionResult UpdateTask(int id)
+        {
+            try
+            {
+                var task = _taskService.GetTaskById(id).Result;
+                var taskDTO = _mapper.Map<TaskTableDTO>(task);
+                return View(taskDTO);
+            }
+            catch (KeyNotFoundException e)
+            {
+                TempData["ErrorMessage"] = e.Message;
+                TempData["AlertType"] = "error";
+                return View("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching the task for update.");
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+
+        }
         // Creating Tasks endpoint
         [HttpPost]
         public async Task<IActionResult> CreateTask(TaskTableDTO model)
@@ -60,15 +83,20 @@ namespace TaskManagement.Web.Controllers
                     bool isTaskCreated = await _taskService.CreateTask(TaskModel);
                     if (isTaskCreated)
                     {
+                        TempData["Create"] = "Task Created successfully.";
                         return RedirectToAction("Index", "Home");
                     }
                     return View(model);
 
                 }
+                else
+                {
+                    return View(model);
+                }
             }
             catch (ConflictException c)
             {
-                _logger.LogError("Error : ",c);
+                _logger.LogError("Error : ", c);
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
             }
@@ -78,7 +106,6 @@ namespace TaskManagement.Web.Controllers
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            return View(model);
         }
 
         //// Getting all tasks endpoint
@@ -94,5 +121,87 @@ namespace TaskManagement.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        // Updating Tasks endpoint
+        [HttpPost]
+        public async Task<IActionResult> UpdateTask(TaskTableDTO model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var taskId = RouteData.Values["id"];
+                    if(taskId != null)
+                    {
+                        model.TaskId = Convert.ToInt32(taskId);
+                        var taskModel = _mapper.Map<TaskTable>(model);
+                        // Logic to update the task
+                        bool isTaskUpdated = await _taskService.UpdateTask(taskModel);
+                        if (isTaskUpdated)
+                        {
+                            TempData["Update"] = "Task updated successfully.";
+                            return RedirectToAction("Index", "Home");
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Task ID is missing.";
+                        TempData["AlertType"] = "error";
+                        return View(model);
+                    }
+
+                }
+                else
+                {
+                    return View(model);
+                }
+            }
+            catch (KeyNotFoundException k)
+            {
+                _logger.LogError("Error : ", k);
+                TempData["ErrorMessage"] = k.Message;
+                TempData["AlertType"] = "error";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating a task.");
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+        }
+        // go to delete page
+
+        [HttpPut]
+        public async Task<IActionResult> DeleteTask(int id)
+        {
+            try
+            {
+                bool isDeleted = await _taskService.Delete(id);
+                if (isDeleted)
+                {
+                    return View("Index");
+                }
+                else
+                {
+                    return View("Index");
+                }
+            }
+            catch (KeyNotFoundException k)
+            {
+                _logger.LogError("Error : ", k);
+                TempData["ErrorMessage"] = k.Message;
+                TempData["AlertType"] = "error";
+                return View("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error : ", ex);
+                TempData["ErrorMessage"] = ex.Message;
+                TempData["AlertType"] = "error";
+                return View("Index");
+            }
+        }
+        
     }
 }

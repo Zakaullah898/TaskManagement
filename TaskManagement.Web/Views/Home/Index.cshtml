@@ -22,4 +22,40 @@
 
 @section Scripts {
     <script src="~/js/taskCard.js" asp-append-version="true"></script>
+    @if (TempData["Update"] != null)
+    {
+        <script>
+                        Swal.fire({
+                icon: 'success',
+                title: 'Updated!',
+                text: '@TempData["Update"]',
+                timer: 1500,
+                showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
+    @if (TempData["Create"] != null)
+    {
+        <script>
+                        Swal.fire({
+                icon: 'success',
+                title: 'Created!',
+                text: '@TempData["Create"]',
+                timer: 1500,
+                showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
+    @if (TempData["Delete"] != null)
+    {
+        <script>
+                        Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: '@TempData["Delete"]',
+                timer: 1500,
+                showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
     }

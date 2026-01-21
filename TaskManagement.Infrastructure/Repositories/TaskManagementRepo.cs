@@ -26,9 +26,17 @@ namespace TaskManagement.Infrastructure.Repositories
         // Create a new entity for the specified type T
         public async Task<bool> CreateAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                await _dbSet.AddAsync(entity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(DbUpdateException)
+            {
+                return false;
+            }
+
         }
 
         public async Task<T> DeleteAsync(Expression<Func<T, bool>> Filter)
@@ -61,11 +69,19 @@ namespace TaskManagement.Infrastructure.Repositories
             }
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public async Task<bool> UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            try
+            {
+                _dbSet.Update(entity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+
         }
     }
 }

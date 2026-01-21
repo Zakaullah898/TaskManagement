@@ -1,12 +1,13 @@
 ﻿@model TaskManagement.Application.DTOs.TaskTableDTO;
 @{
-    ViewData["Title"] = "Create Task";
+    ViewData["Title"] = "Updating Task";
 }
+
 <div class="w-100 card border-0 p-4 ">
     <div class="card-header bg-success py-3 bg-gradient">
         <div class="row">
             <div class="col text-center">
-                <h4 class="text-white mb-0">Create New Task</h4>
+                <h4 class="text-white mb-0">Update Task</h4>
             </div>
         </div>
     </div>
@@ -48,25 +49,24 @@
             </div>
             <div class="form-group mb-3">
                 <label for="floatingTextarea2" asp-for="Description"></label>
-                <textarea class="form-control" placeholder="Write Project Description Here" id="floatingTextarea2" style="height: 100px" asp-for ="Description"></textarea>
+                <textarea class="form-control" placeholder="Write Project Description Here" id="floatingTextarea2" style="height: 100px" asp-for="Description"></textarea>
             </div>
             <div class="row pt-2">
                 <div class="col-6 col-md-3">
                     <button type="submit" class="btn btn-success w-100">
-                        <i class="bi bi-check-circle"></i> Create
+                        <i class="bi bi-check-circle"></i> Update Taske
                     </button>
                 </div>
                 <div class="col-6 col-md-3">
-                    <button asp-controller="home" asp-action="Index" class="btn btn-success w-100">
+                    <button asp-controller="Home" asp-action="Index" class="btn btn-success w-100">
                         <i class="bi bi-x-circle"></i> Cancel
                     </button>
                 </div>
             </div>
-            @* <button type="submit" class="btn btn-primary" asp-action="CreateTask">Create Task</button> *@
+            @* <button type="submit" class="btn btn-primary" asp-action="UpdateTask">Update Taske</button> *@
         </form>
     </div>
 </div>
-
 @section Scripts {
     @if (TempData["ErrorMessage"] != null)
     {
@@ -79,6 +79,5 @@
             });
         </script>
     }
-
 
 }
