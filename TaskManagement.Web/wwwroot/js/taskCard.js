@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-
+    showLoader()
     loadTasks();
 });
 function loadTasks() {
@@ -9,7 +9,7 @@ function loadTasks() {
         success: function (data) {
             // On success, insert the returned HTML (partial view content) into the container
             $('#task-item').html(data);
-
+            hideLoader()
             // Attach mouseleave event listeners to dropdown menus
             const cardDropdown = document.querySelectorAll('.dropdown-menu-card');
             cardDropdown.forEach(function (dropdown) {
@@ -49,7 +49,6 @@ function conformationDelete(taskId) {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log("TaskId", taskId)
 
                 fetch(`/Home/DeleteTask?id=${taskId}`, {
                     method: 'PUT'
@@ -95,3 +94,44 @@ function conformationDelete(taskId) {
 }
 
 
+function showLoader() {
+    //$("#preloaded").css("display", "block");
+    document.getElementById("preloaded").style.display = "block";
+}
+
+function hideLoader() {
+    document.getElementById("preloaded").style.display = "none";
+}
+
+// function to open deleted tasks page
+function openDeletedTasks() {
+    $.ajax({
+        url: '/Home/DeletedTasks', // URL to the GET method
+        type: 'GET',
+        success: function (data) {
+            // On success, insert the returned HTML (partial view content) into the container
+            $('#task-item').html(data);
+            hideLoader()
+            // Attach mouseleave event listeners to dropdown menus
+            const cardDropdown = document.querySelectorAll('.dropdown-menu-card');
+            cardDropdown.forEach(function (dropdown) {
+                dropdown.addEventListener('mouseleave', function () {
+                    this.classList.remove('show');
+                    console.log('mouseleave event triggered for card dropdown');
+                });
+            });
+
+            console.log("Card-class", cardDropdown)
+        },
+        error: function () {
+            //alert('.');
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error loading items',
+                icon: 'AlertType',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
+}

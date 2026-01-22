@@ -11,4 +11,6 @@ public class UserRoles
     public int RoleId { get; set; }
     public string? RoleName { get; set; }
     public string? RoleDescription { get; set; }
+    // Navigation property
+    public virtual ICollection<AssignUserRole>? AssignUserRoles { get; set; }
 }

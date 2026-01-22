@@ -50,3 +50,18 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @if (TempData["Error"] != null)
+    {
+        <script>
+                        Swal.fire({
+                icon: 'AlertType',
+                title: 'Wrong Credential',
+                text: '@TempData["Error"]',
+                timer: 1500,
+                showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
+}

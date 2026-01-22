@@ -89,15 +89,31 @@ namespace TaskManagement.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = _context.AppUsers.FirstOrDefault(u => u.Email == dto.Email);
+                    if (user == null)
+                    {
+                        TempData["Error"] = "Invalid username or password.";
+                        ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                        return RedirectToAction("Login");
+                    }
                     bool result = _helperMethods.VerifyPassword(dto.EnteredPassword!, user?.PasswordHash!, user?.Salt!);
                     // Validate user (DB check)
                     if (result)
                     {
+                        var UserRoles =  _context.AssignUserRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId).ToList();
+
                         var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, user.UserName!),
                             new Claim("UserId", user.Id.ToString()),
+                            
                         };
+                        foreach (var role in UserRoles)
+                        {
+                            Console.WriteLine("User Role: " + role);
+                            var roleName = _context.UserRoles.FirstOrDefault(r => r.RoleId == role);
+                            Console.WriteLine("Role Name: " + roleName?.RoleName);
+                            claims.Add(new Claim(ClaimTypes.Role, roleName?.RoleName!));
+                        }
                         var identity = new ClaimsIdentity(claims, "Cookies");
                         var principal = new ClaimsPrincipal(identity);
 

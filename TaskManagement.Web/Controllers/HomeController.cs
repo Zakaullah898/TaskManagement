@@ -12,7 +12,7 @@ using TaskManagement.Web.Models;
 
 namespace TaskManagement.Web.Controllers
 {
-    [Authorize]
+    [Authorize (Roles = "Manager")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -171,7 +171,12 @@ namespace TaskManagement.Web.Controllers
             }
         }
         // go to delete page
-
+        [HttpGet]
+        public async Task<IActionResult> DeletedTasks() {
+            var tasks = await _taskService.GetAllTasks();
+            var taskDTOs = _mapper.Map<IEnumerable<TaskTableDTO>>(tasks);
+            return PartialView("_DeletedTasksPartial", taskDTOs);
+        }
         [HttpPut]
         public async Task<IActionResult> DeleteTask(int id)
         {

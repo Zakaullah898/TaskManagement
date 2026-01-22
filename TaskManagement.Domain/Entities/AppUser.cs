@@ -24,6 +24,7 @@ namespace TaskManagement.Domain.Entities
         public bool IsActive { get; set; }
 
         public virtual ICollection<TaskAssignments>? TaskAssignments { get; set; }
+        public virtual ICollection<AssignUserRole>? AssignUserRoles { get; set; }
 
     }
 }

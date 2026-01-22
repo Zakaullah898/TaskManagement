@@ -3,18 +3,60 @@
     ViewData["Title"] = "Home Page";
 }
 @* Home container  *@
-<div class="container">
+<div class="container min-vh-84">
 
     
     <div class="container">
 
-        <div class="text-center">
-            <h1 class="display-4">Welcome To Task Management System</h1>
-        </div>
-            <div class="container" id="task-item">
+        <div class="container d-flex justify-content-end mb-3">
+            <div class="row g-2">
 
+                <div class="col col-lg-3 col-md-3 ">
+                    <a class="btn btn-success mb-3 btn-responsive"
+                       asp-controller="Home"
+                       asp-action="Index">
+                        <i class="bi bi-box-arrow-in-up-left"></i> Home
+                    </a>
+                </div>
+                <div class="col col-lg-3 col-md-3 ">
+                    
+                    <a class="btn btn-danger mb-3 btn-responsive" onclick="openDeletedTasks()">
+                        <i class="bi bi-trash3-fill"></i> Deleted Tasks
+                    </a>
+                </div>
+                <div class="col col-lg-3 col-md-3 ">
+                    <a class="btn btn-success mb-3 btn-responsive" href="/Task/Create">
+                        <i class="bi bi-list-task"></i> Assigned Tasks
+                    </a>
+                </div>
+                <div class="col col-lg-3 col-md-3 ">
+                    <a class="btn btn-primary mb-3 btn-responsive"
+                        asp-controller="Home"
+                       asp-action="CreateTask">
+                        <i class="bi bi-plus"></i> Add Task
+                    </a>
+                </div>
             </div>
-            
+        </div>
+        <div class="container d-flex" id="task-item">
+
+        </div>
+
+
+        <div id="preloaded" class="loader">
+                <div class="spinner-grow text-primary" role="status">
+                    <span class="sr-only"></span>
+                </div>
+                <div class="spinner-grow text-secondary" role="status">
+                    <span class="sr-only"></span>
+                </div>
+                <div class="spinner-grow text-success" role="status">
+                    <span class="sr-only"></span>
+                </div>
+                <div class="spinner-grow text-danger" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            </div>
         
         
     </div>

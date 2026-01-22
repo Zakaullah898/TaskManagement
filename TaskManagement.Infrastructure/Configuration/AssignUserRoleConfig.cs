@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TaskManagement.Infrastructure.Configuration
 {
-    internal class UserRolesConfig : IEntityTypeConfiguration<UserRoles>
+    internal class AssignUserRoleConfig : IEntityTypeConfiguration<UserRoles>
     {
         public void Configure(EntityTypeBuilder<UserRoles> builder)
         {
