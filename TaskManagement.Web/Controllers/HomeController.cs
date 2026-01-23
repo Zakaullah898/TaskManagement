@@ -123,7 +123,7 @@ namespace TaskManagement.Web.Controllers
         }
 
         // Updating Tasks endpoint
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> UpdateTask(TaskTableDTO model)
         {
             try

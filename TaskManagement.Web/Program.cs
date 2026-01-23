@@ -7,6 +7,7 @@ using TaskManagement.Domain.Interfaces;
 using TaskManagement.Infrastructure.Utilities;
 using TaskManagement.Infrastructure.Repositories;
 using TaskManagement.Application.Services;
+using Microsoft.AspNetCore.CookiePolicy;
 var builder = WebApplication.CreateBuilder(args);
 
 // Adding Automapper Configuration
@@ -19,6 +20,7 @@ builder.Services.AddScoped(typeof(ITaskManagementRepo<>), typeof(TaskManagementR
 
 // Adding dependency injection for Services
  builder.Services.AddScoped<ITaskService, TaskService>();
+ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -32,15 +34,25 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Make the session cookie inaccessible to client-side scripts
     options.Cookie.IsEssential = true; // Make the session cookie essential for the app to function
 });
+// Configuration cookies policy
+//builder.Services.Configure<CookiePolicyOptions>(options =>
+//{
+//    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+//    options.HttpOnly = HttpOnlyPolicy.Always;
+//    options.Secure = CookieSecurePolicy.SameAsRequest;
+//});
 
 // Configuration for cookies
 builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", options =>
 {
     options.LoginPath = "/Auth/Login";
     options.AccessDeniedPath = "/Auth/Login";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 });
 
-builder.Services.AddAuthorization();
+
+
+
 builder.Services.AddControllersWithViews();
 
 

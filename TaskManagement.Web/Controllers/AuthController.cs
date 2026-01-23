@@ -113,6 +113,7 @@ namespace TaskManagement.Web.Controllers
                             var roleName = _context.UserRoles.FirstOrDefault(r => r.RoleId == role);
                             Console.WriteLine("Role Name: " + roleName?.RoleName);
                             claims.Add(new Claim(ClaimTypes.Role, roleName?.RoleName!));
+                            claims.Add(new Claim("ManagerOnly", roleName?.RoleName!));
                         }
                         var identity = new ClaimsIdentity(claims, "Cookies");
                         var principal = new ClaimsPrincipal(identity);

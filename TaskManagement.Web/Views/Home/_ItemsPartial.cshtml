@@ -50,7 +50,16 @@
                     </div>
                     @* <hr /> *@
                     <div class="border-top">
-                    <p class="card-text ">@item.Description</p>
+                    <p class="card-text ">
+                        @(item.Description.Length > 20 ? item.Description.Substring(0,20) + "....": item.Description)
+                        
+                    </p>
+                            @if (item.Description.Length > 20)
+                            {
+                                <a class="btn btn-primary btn-sm" asp-controller="Tasks" asp-action="TaskDetails" asp-route-id="@item.TaskId">
+                                    Task View
+                                </a>
+                            }
                     </div>
    
                     
