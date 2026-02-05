@@ -9,6 +9,7 @@ using TaskManagement.Infrastructure.Repositories;
 using TaskManagement.Application.Services;
 using Microsoft.AspNetCore.CookiePolicy;
 var builder = WebApplication.CreateBuilder(args);
+ // REQUIRED for JsonPatch
 
 // Adding Automapper Configuration
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
@@ -17,16 +18,18 @@ builder.Services.AddScoped<IHelperMethods,HelperMethods>();
 
 // Adding dependency injection for Repositories
 builder.Services.AddScoped(typeof(ITaskManagementRepo<>), typeof(TaskManagementRepo<>));
+builder.Services.AddScoped<IAssignUserRoleRepo, AssignUserRoleRepo>();
 
 // Adding dependency injection for Services
- builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
  builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TaskContext") ?? throw new InvalidOperationException("Connection string 'MvcMovieContext' not found.")));
 
+// adding patch json support
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson();
 // Required: Add the session services
 builder.Services.AddSession(options =>
 {

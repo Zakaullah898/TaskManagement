@@ -14,18 +14,19 @@ namespace TaskManagement.Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<AssignUserRole> builder)
         {
-            builder.ToTable("AssignRoles");
+            builder.ToTable("AssignUserRoles");
             builder.HasKey(x => x.Id);
+            builder.Property(x =>x.Id).UseIdentityColumn();
             builder.Property(x => x.UserId).IsRequired();
             builder.Property(x => x.RoleId).IsRequired();
             // Define foreign key relationship with AppUser
             builder.HasOne(ar => ar.User)
-                   .WithMany(u => u.AssignUserRoles)
+                   .WithMany(u => u.AssignRoles)
                    .HasForeignKey(ar => ar.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
             // Define foreign key relationship with UserRoles
             builder.HasOne(ar => ar.Role)
-                   .WithMany(r => r.AssignUserRoles)
+                   .WithMany(r => r.AssignRoles)
                    .HasForeignKey(ar => ar.RoleId)
                    .OnDelete(DeleteBehavior.Cascade);
         }

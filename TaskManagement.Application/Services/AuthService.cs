@@ -23,5 +23,11 @@ namespace TaskManagement.Application.Services
         {
             return await _userRepo.GetAsync(u=> u.Id == id);
         }
+        public async Task<List<AppUser>> GetAllUsers()
+        {
+            return await _userRepo.GetAllAsync();
+        }
+
+
     }
 }

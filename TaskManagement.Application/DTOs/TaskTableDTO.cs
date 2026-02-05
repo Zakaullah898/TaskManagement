@@ -17,8 +17,9 @@ namespace TaskManagement.Application.DTOs
         public DateTime DueDate { get; set; }
         public string? CreatedByUserId { get; set; }
         public string? CreatedByUserName { get; set; }
+        public string? AssignedToUserName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

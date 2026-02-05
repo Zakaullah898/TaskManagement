@@ -1,0 +1,56 @@
+﻿@model IEnumerable<TaskManagement.Application.DTOs.UserDTO>
+
+@* <div class="table-responsive mb-0"> *@
+    <table class="table table-bordered table-hover align-middle ">
+    <thead class="table-dark sticky-header mt-0">
+            <tr>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Last Login</th>
+                <th>Active</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="taskTableBody">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.UserName</td>
+                    <td>@item.Email</td>
+                    <td>
+                        @foreach (var role in item.Role!)
+                        {
+                            <span class="badge bg-info me-1">@role</span>
+                    }
+                        </td>
+                <td>@item.LastLogin.ToString("yyyy-MM-dd hh:mm tt")</td>
+                    <td>
+                        @if (!item.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inactive</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center">
+                            <a class="btn btn-warning btn-sm me-2">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <button class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    
+@* </div> *@
+
+

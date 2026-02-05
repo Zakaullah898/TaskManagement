@@ -9,6 +9,8 @@ namespace TaskManagement.Domain.Interfaces
 {
     public interface IAuthService
     {
+        Task<List<AppUser>> GetAllUsers();
         Task<AppUser> GetUserById(string id);
+        
     }
 }

@@ -17,10 +17,19 @@ namespace TaskManagement.Web.Controllers
 
         private readonly IHelperMethods _helperMethods;
         private readonly AppDbContext _context;
-        public AuthController(IHelperMethods helperMethods, AppDbContext context)
+        private readonly ITaskManagementRepo<UserRole> _userRolesRepo;
+        private readonly IAssignUserRoleRepo _assignUserRoleRepo;
+        public AuthController(
+            IHelperMethods helperMethods,
+            AppDbContext context,
+            ITaskManagementRepo<UserRole> userRolesRepo,
+            IAssignUserRoleRepo assignUserRoleRepo
+            )
         {
             _helperMethods = helperMethods;
             _context = context;
+            _userRolesRepo = userRolesRepo;
+            _assignUserRoleRepo = assignUserRoleRepo;
         }
         public IActionResult Register()
         {
@@ -33,7 +42,7 @@ namespace TaskManagement.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register([Bind] RegisterUserDTO dto)
+        public async Task<IActionResult> Register([Bind] RegisterUserDTO dto)
         {
             try
             {
@@ -50,6 +59,7 @@ namespace TaskManagement.Web.Controllers
                     // Convert to a string for use in models, views, or database fields
                     string id = uniqueId.ToString();
                     PasswordHashResult result = _helperMethods.HashPassword(dto.EnteredPassword!);
+
                     var u = new AppUser
                     {
                         Id = id,
@@ -63,6 +73,26 @@ namespace TaskManagement.Web.Controllers
                     };
                     _context.AppUsers.Add(u);
                     _context.SaveChanges();
+                    var role = await _userRolesRepo.GetAsync(r => r.RoleName == "Employee");
+                    if (role != null)
+                    {
+                       
+                        var assignRole = new AssignUserRole
+                        {
+                            UserId = u.Id,
+                            RoleId = role.RoleId
+                        };
+                        var isCreated= await _assignUserRoleRepo.CreateAsync(assignRole);
+                        if (isCreated)
+                        {
+
+                            TempData["Success"] = "Registration successful. Please log in.";
+
+                        }
+
+                    }
+                    
+
                     return RedirectToAction("Login");
                 }
                 else
@@ -82,7 +112,7 @@ namespace TaskManagement.Web.Controllers
         // POST: Auth/Login
         [HttpPost]
 
-        public IActionResult Login([Bind] LoginUserDTO dto)
+        public async Task<IActionResult> Login([Bind] LoginUserDTO dto)
         {
             try
             {
@@ -99,12 +129,12 @@ namespace TaskManagement.Web.Controllers
                     // Validate user (DB check)
                     if (result)
                     {
-                        var UserRoles =  _context.AssignUserRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId).ToList();
+                        var UserRoles = await  _assignUserRoleRepo.GettingRoleIds(u =>u.UserId == user.Id);
 
                         var claims = new List<Claim>
                         {
-                            new Claim(ClaimTypes.Name, user.UserName!),
-                            new Claim("UserId", user.Id.ToString()),
+                            new Claim(ClaimTypes.Name, user!.UserName!),
+                            new Claim("UserId", user.Id!.ToString()!),
                             
                         };
                         foreach (var role in UserRoles)
@@ -119,7 +149,16 @@ namespace TaskManagement.Web.Controllers
                         var principal = new ClaimsPrincipal(identity);
 
                         HttpContext.SignInAsync("Cookies", principal);
+
+                        TempData["Success"] = "Login successful.";
+                        user.LastLogin = DateTime.Now;
+                        _context.AppUsers.Update(user);
+                        _context.SaveChanges();
                         return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Invalid username or password.";
                     }
 
                     ModelState.AddModelError(string.Empty, "Invalid username or password.");

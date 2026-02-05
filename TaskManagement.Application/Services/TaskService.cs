@@ -1,6 +1,8 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +15,13 @@ namespace TaskManagement.Application.Services
     public class TaskService : ITaskService
     {
         private readonly ITaskManagementRepo<TaskTable> _taskRepository;
-        public TaskService(ITaskManagementRepo<TaskTable> taskRepository)
+        private readonly ITaskManagementRepo<TaskAssignments> _taskAssignmentsRepository;
+        IMapper _mapper;
+        public TaskService(ITaskManagementRepo<TaskTable> taskRepository, ITaskManagementRepo<TaskAssignments> taskAssignmentsRepository, IMapper mapper)
         {
             _taskRepository = taskRepository;
+            _taskAssignmentsRepository = taskAssignmentsRepository;
+            _mapper = mapper;
         }
 
         // Get all tasks
@@ -94,6 +100,54 @@ namespace TaskManagement.Application.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> AssignTaskToUser(int taskId, string userId, string currentLoginUser)
+        {
+            
+            var existingAssignment = await _taskAssignmentsRepository.GetAsync(ta => ta.TaskId == taskId);
+            if (existingAssignment != null)
+            {
+                throw new ConflictException("Task is already assigned to a user.");
+            }
+
+                var assignment = new TaskAssignments
+            {
+                TaskId = taskId,
+                AssignedToUserId = userId,
+                AssignedByUserId = currentLoginUser,
+                AssignedAt = DateTime.UtcNow,
+                isActive = true
+            };
+                var isCreated = await _taskAssignmentsRepository.CreateAsync(assignment);
+                if (isCreated)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+        }
+
+        // Partial updating task status
+        public async Task<bool> PartialUpdatingTaskStatus(TaskTable task)
+        {
+            
+            if(task == null )
+            {
+                throw new ArgumentNullException(nameof(task));
+            }
+            
+            var isUpdated = await  _taskRepository.UpdateAsync(task);
+            if (isUpdated)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

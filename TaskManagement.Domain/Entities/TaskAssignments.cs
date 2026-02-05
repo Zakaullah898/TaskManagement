@@ -17,7 +17,7 @@ namespace TaskManagement.Domain.Entities
 
         // Navigation properties
         public virtual AppUser? AssignedToUser { get; set; }
-        public virtual TaskTable Task { get; set; }
+        public virtual TaskTable? Task { get; set; }
 
     }
 }

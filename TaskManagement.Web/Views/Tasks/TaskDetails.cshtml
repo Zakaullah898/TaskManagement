@@ -45,14 +45,17 @@
             <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
                 <i class="bi bi-arrow-left"></i> Back to Tasks
             </a>
+            @if (User.IsInRole("Admin") || User.IsInRole("Manager")){
+
             <div>
-                <a class="btn btn-warning me-2" asp-controller="Home" asp-action="UpdateTask" asp-route-id="@Model.TaskId">
+                <a class="btn btn-warning me-2" asp-controller="Tasks" asp-action="UpdateTask" asp-route-id="@Model.TaskId">
                     <i class="bi bi-pencil-square"></i> Edit Task
                 </a>
                 <button class="btn btn-danger" onclick="conformationDelete(@Model.TaskId)">
                     <i class="bi bi-trash3-fill"></i> Delete Task
                 </button>
             </div>
+            }
          </div>
     </div>
 </div>

@@ -19,11 +19,7 @@ namespace TaskManagement.Infrastructure.Migrations
                 name: "IX_TaskTable_CreatedByUserId",
                 table: "TaskTable");
 
-            migrationBuilder.AddColumn<string>(
-                name: "UserId",
-                table: "TaskTable",
-                type: "nvarchar(450)",
-                nullable: true);
+
 
             migrationBuilder.CreateTable(
                 name: "TaskAssignments",
@@ -53,10 +49,7 @@ namespace TaskManagement.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_TaskTable_UserId",
-                table: "TaskTable",
-                column: "UserId");
+
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskAssignments_AssignedToUserId",
@@ -68,12 +61,7 @@ namespace TaskManagement.Infrastructure.Migrations
                 table: "TaskAssignments",
                 column: "TaskId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_TaskTable_AppUsers_UserId",
-                table: "TaskTable",
-                column: "UserId",
-                principalTable: "AppUsers",
-                principalColumn: "Id");
+          
         }
 
         /// <inheritdoc />
@@ -90,9 +78,6 @@ namespace TaskManagement.Infrastructure.Migrations
                 name: "IX_TaskTable_UserId",
                 table: "TaskTable");
 
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "TaskTable");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskTable_CreatedByUserId",

@@ -1,0 +1,131 @@
+﻿@model IEnumerable<TaskManagement.Application.DTOs.TaskTableDTO>
+
+@{
+}
+<div class="row  g-3">
+    @foreach (var item in Model)
+    {
+        @if (!item.IsDeleted)
+        {
+            <div class="col d-flex">
+                <div class="card @(item.IsDeleted ? "bg-light opacity-50 pe-none" : "none")" style="width: 15rem;" aria-disabled="@(item.IsDeleted ? true : false)">
+                    <div class="card-header
+                                                   @(item.IsDeleted ? "bg-danger" : item.Status == "Completed" ? "bg-success" : item.Status == "InProgress" ? "bg-warning" : item.Status == "OnHold" ? "bg-danger" : "bg-primary")">
+                        <div class="row">
+                            <div class="col-6 text-white ">
+                                @if (item.IsDeleted)
+                                {
+                                    <i class="bi bi-trash3-fill"></i>
+                                }
+                                else
+                                {
+
+                                    @item.Status
+                                }
+                            </div>
+                            <div class="col-6 text-white text-end">
+                                <div class="dropdown ">
+                                    <i class="bi bi-three-dots-vertical"
+                                       type="button"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="true"></i>
+                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-card">
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                                        {
+                                            <li>
+                                                <button type="button"
+                                                        id="showModal"
+                                                        class="dropdown-item"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#assignTask"
+                                                        data-id="@item.TaskId">
+                                                    Assign Task
+                                                </button>
+                                            </li>
+                                            <li><a class="dropdown-item" asp-controller="Tasks" asp-action="UpdateTask" asp-route-id="@item.TaskId">Edit</a></li>
+                                            <li><button class="dropdown-item" onclick="conformationDelete(@item.TaskId)">Delete</button></li>
+                                        }
+                                        else
+                                        {
+                                            <li><button class="dropdown-item status-btn" data-task-id="@item.TaskId" data-status="InProgress">InProgress</button></li>
+                                            <li><button class="dropdown-item status-btn" data-task-id="@item.TaskId" data-status="Completed">Completed</button></li>
+                                            <li><button class="dropdown-item status-btn" data-task-id="@item.TaskId" data-status="OnHold">OnHold</button></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <div class="row">
+                            <div class="col-12">
+
+                                <span class="text-secondary">Priority: @item.priority</span>
+                            </div>
+                            <div class="col-12">
+                                <span class="text-secondary">Created At: @item.CreatedAt.ToShortDateString()</span>
+                            </div>
+                        </div>
+                        @* <hr /> *@
+                        <div class="border-top">
+
+                            <p class="card-text ">
+                                @(item.Description.Length > 20 ? item.Description.Substring(0, 20) + "...." : item.Description)
+
+                            </p>
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    @if (item.AssignedToUserName != null)
+                                    {
+                                        <span class="text-secondary">Assigned To : @item.AssignedToUserName</span>
+                                    }
+                                </div>
+                                <div class="col-12">
+                                    <a class="btn btn-primary btn-sm" asp-controller="Tasks" asp-action="TaskDetails" asp-route-id="@item.TaskId">
+                                        Task View
+                                    </a>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* dialoge box for assigning tasks *@
+        <div class="modal fade" id="assignTask">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Assign Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-controller="Tasks" asp-action="AssignTask" method="post">
+                            <input type="hidden" name="TaskId" id="taskId" />
+                            <div class="mb-3">
+                                <label for="assignee" class="form-label">Select User</label>
+                                <select class="form-select" id="assignee" name="AssigneeId" required>
+                                    <!-- Options will be loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Assign</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+

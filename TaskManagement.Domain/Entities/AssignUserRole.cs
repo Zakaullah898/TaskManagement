@@ -10,9 +10,10 @@ namespace TaskManagement.Domain.Entities
     {
         public int Id { get; set; }
         public string? UserId { get; set; }
-        public AppUser? User { get; set; }
+        public AppUser User { get; set; } =null!;
+
         public int RoleId { get; set; }
-        public UserRoles? Role { get; set; }
+        public UserRole Role { get; set; } = null!;
 
     }
 }

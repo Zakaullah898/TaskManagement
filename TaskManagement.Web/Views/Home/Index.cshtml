@@ -9,56 +9,30 @@
     <div class="container d-flex flex-column">
 
         <div class="container d-flex  mb-4">
-            @* <div class="row g-2">
-
-                <div class="col col-lg-3 col-md-3 ">
-                    <a class="btn btn-success mb-3 btn-responsive"
-                       asp-controller="Home"
-                       asp-action="Index">
-                        <i class="bi bi-box-arrow-in-up-left"></i> Home
-                    </a>
-                </div>
-                <div class="col col-lg-3 col-md-3 ">
-                    
-                    <a class="btn btn-danger mb-3 btn-responsive" onclick="openDeletedTasks()">
-                        <i class="bi bi-trash3-fill"></i> Deleted Tasks
-                    </a>
-                </div>
-                <div class="col col-lg-3 col-md-3 ">
-                    <a class="btn btn-success mb-3 btn-responsive" href="/Task/Create">
-                        <i class="bi bi-list-task"></i> Assigned Tasks
-                    </a>
-                </div>
-                <div class="col col-lg-3 col-md-3 ">
-                    <a class="btn btn-primary mb-3 btn-responsive"
-                        asp-controller="Home"
-                       asp-action="CreateTask">
-                        <i class="bi bi-plus"></i> Add Task
-                    </a>
-                </div>
-            </div> *@
+         
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="menue-tab">
-                
-                    <a class="btn btn-outline-primary active" 
-                       asp-controller="Home"
-                       asp-action="Index">
+
+                <a class="btn btn-outline-primary home-active-btn" onclick="loadTasks()">
                         <i class="bi bi-box-arrow-in-up-left"></i> Home
                     </a>
-               
-                    <a class="btn btn-outline-primary" 
-                       onclick="openDeletedTasks()">
+
+                <a class="btn btn-outline-primary deleted-active-btn"
+                   onclick="openDeletedTasks()">
                     <i class="bi bi-trash3-fill"></i> Deleted Tasks
                     </a>
-                    <a class="btn btn-outline-primary" 
-                       asp-controller="Home"
-                       asp-action="Index">
+                <a class="btn btn-outline-primary assign-active-btn"
+                   onclick="loadAllAssigned()">
                     <i class="bi bi-list-task"></i> Assigned Tasks
                     </a>
-                    <a class="btn btn-outline-primary" 
-                   asp-controller="Home"
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    
+                <a class="btn btn-outline-primary" 
+                   asp-controller="Tasks"
                    asp-action="CreateTask">
                     <i class="bi bi-plus"></i> Add Task
                     </a>
+                }
                 
             </div>
         </div>
@@ -80,7 +54,7 @@
                 <div class="spinner-grow text-danger" role="status">
                     <span class="sr-only"></span>
                 </div>
-            </div>
+        </div>
         
         
     </div>
@@ -121,6 +95,30 @@
                 text: '@TempData["Delete"]',
                 timer: 1500,
                 showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '@TempData["Success"]',
+                icon: 'success',
+                timer: 1500,
+                confirmButtonText: 'OK'
+            });
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+                        Swal.fire({
+                title: 'Error!',
+                text: '@TempData["ErrorMessage"]',
+                icon: '@TempData["AlertType"]',
+                timer: 2000,
+                confirmButtonText: 'OK'
             });
         </script>
     }

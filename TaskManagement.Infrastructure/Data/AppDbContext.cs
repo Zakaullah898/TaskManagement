@@ -17,16 +17,17 @@ namespace TaskManagement.Infrastructure.Data
         }
 
         public virtual DbSet<AppUser> AppUsers { get; set; }
-        public virtual DbSet<UserRoles> UserRoles { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<TaskTable> TaskTable { get; set; }
         public virtual DbSet<TaskAssignments> TaskAssignments { get; set; }
         public virtual DbSet<AssignUserRole> AssignUserRoles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
             modelBuilder.ApplyConfiguration(new AppUserConfig());
-            modelBuilder.ApplyConfiguration(new AssignUserRoleConfig());
+            modelBuilder.ApplyConfiguration(new UserRoleConfig());
             modelBuilder.ApplyConfiguration(new TaskTableConfig());
             modelBuilder.ApplyConfiguration(new TaskAssignmentsConfig());
+            modelBuilder.ApplyConfiguration(new AssignRoleConfig());
         }
 
         }

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace TaskManagement.Domain.Entities;
 
-public class UserRoles
+public class UserRole
 {
     public int RoleId { get; set; }
     public string? RoleName { get; set; }
     public string? RoleDescription { get; set; }
     // Navigation property
-    public virtual ICollection<AssignUserRole>? AssignUserRoles { get; set; }
+    public virtual ICollection<AssignUserRole>? AssignRoles { get; set; }
 }

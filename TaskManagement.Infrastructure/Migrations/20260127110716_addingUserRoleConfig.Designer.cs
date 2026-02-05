@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskManagement.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TaskManagement.Infrastructure.Data;
 namespace TaskManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260127110716_addingUserRoleConfig")]
+    partial class addingUserRoleConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,7 +87,6 @@ namespace TaskManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -93,7 +95,7 @@ namespace TaskManagement.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AssignUserRoles", (string)null);
+                    b.ToTable("AssignUserRoles");
                 });
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.TaskAssignments", b =>
@@ -185,7 +187,7 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.ToTable("TaskTable", (string)null);
                 });
 
-            modelBuilder.Entity("TaskManagement.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("TaskManagement.Domain.Entities.UserRoles", b =>
                 {
                     b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
@@ -209,17 +211,15 @@ namespace TaskManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.AssignUserRole", b =>
                 {
-                    b.HasOne("TaskManagement.Domain.Entities.UserRole", "Role")
-                        .WithMany("AssignRoles")
+                    b.HasOne("TaskManagement.Domain.Entities.UserRoles", "Role")
+                        .WithMany("AssignUserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TaskManagement.Domain.Entities.AppUser", "User")
-                        .WithMany("AssignRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("AssignUserRoles")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Role");
 
@@ -254,7 +254,7 @@ namespace TaskManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.AppUser", b =>
                 {
-                    b.Navigation("AssignRoles");
+                    b.Navigation("AssignUserRoles");
 
                     b.Navigation("TaskAssignments");
                 });
@@ -264,9 +264,9 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.Navigation("TaskAssignments");
                 });
 
-            modelBuilder.Entity("TaskManagement.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("TaskManagement.Domain.Entities.UserRoles", b =>
                 {
-                    b.Navigation("AssignRoles");
+                    b.Navigation("AssignUserRoles");
                 });
 #pragma warning restore 612, 618
         }

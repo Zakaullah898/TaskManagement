@@ -25,11 +25,8 @@ namespace TaskManagement.Infrastructure.Configuration
             builder.Property(x => x.CreatedByUserId).HasMaxLength(100);
             builder.Property(x => x.CreatedAt).IsRequired();
             builder.Property(x => x.UpdatedAt).IsRequired();
-            builder.Property(x => x.IsDeleted).IsRequired().HasDefaultValue(false);
+            builder.Property(x => x.IsDeleted).IsRequired().ValueGeneratedNever().HasDefaultValue(false);
 
-            builder.HasMany(t => t.TaskAssignments)
-                .WithOne(ta => ta.Task)
-                .HasForeignKey(t => t.TaskId);
 
 
         }

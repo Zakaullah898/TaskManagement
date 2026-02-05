@@ -26,10 +26,6 @@ namespace TaskManagement.Infrastructure.Configuration
             builder.Property(x => x.LastLogin);
             builder.Property(x => x.IsActive).IsRequired();
 
-            // Adding foreign key relationship with TaskTable
-            builder.HasMany(u => u.TaskAssignments)
-                .WithOne(ta => ta.AssignedToUser)
-                .HasForeignKey(ta => ta.AssignedToUserId);
         }
     }
 }

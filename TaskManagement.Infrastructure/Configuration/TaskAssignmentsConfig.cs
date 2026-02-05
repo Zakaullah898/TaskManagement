@@ -19,10 +19,12 @@ namespace TaskManagement.Infrastructure.Configuration
             builder.Property(x => x.AssignedByUserId).IsRequired(false);
             builder.Property(x => x.AssignedAt).IsRequired();
             builder.Property(x => x.isActive).IsRequired();
+
             // Relationships
             builder.HasOne(ta => ta.AssignedToUser)
                 .WithMany(u => u.TaskAssignments)
                 .HasForeignKey(ta => ta.AssignedToUserId);
+
 
         }
                 

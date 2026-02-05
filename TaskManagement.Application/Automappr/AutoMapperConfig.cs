@@ -15,8 +15,9 @@ namespace TaskManagement.Application.Automappr
         {
             // Add your mappings here
             // CreateMap<Source, Destination>();
-            CreateMap<RegisterUserDTO, AppUser>().ReverseMap();
+            CreateMap<RegisterUserDTO, AssignUserRole>().ReverseMap();
             CreateMap<TaskTableDTO, TaskTable>().ReverseMap();
+            CreateMap<UserDTO, AppUser>().ReverseMap();
         }
     }
 }

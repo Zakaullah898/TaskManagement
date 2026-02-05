@@ -1,0 +1,8 @@
+﻿@model IEnumerable<TaskManagement.Application.DTOs.UserDTO>
+
+
+
+@foreach (var user in Model)
+{
+    <option value="@user.Id" >@user.UserName</option>
+}

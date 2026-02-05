@@ -1,0 +1,33 @@
+﻿<div class="container mt-4">
+    <div class="btn-group mt-5" role="group" aria-label="Basic radio toggle button group" id="menue-tab">
+
+        
+        <a class="btn btn-outline-primary user-active-tab" id="all-users"
+           onclick="loadAllAssigned()">
+            <i class="bi bi-people-fill me-2"></i>User
+        </a>
+
+            <a class="btn btn-outline-primary tasks-active-tab" id="all-task">
+            <i class="bi bi-list-check me-2"></i> All Tasks
+            </a>
+
+    </div>
+    <div class="container table-container mt-4" id="taskTable">
+        
+    </div>
+
+</div>
+<div id="preloaded" class="loader">
+    <div class="spinner-grow text-primary" role="status">
+        <span class="sr-only"></span>
+    </div>
+    <div class="spinner-grow text-secondary" role="status">
+        <span class="sr-only"></span>
+    </div>
+    <div class="spinner-grow text-success" role="status">
+        <span class="sr-only"></span>
+    </div>
+    <div class="spinner-grow text-danger" role="status">
+        <span class="sr-only"></span>
+    </div>
+</div>

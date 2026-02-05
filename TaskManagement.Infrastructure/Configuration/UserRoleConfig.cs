@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TaskManagement.Infrastructure.Configuration
 {
-    internal class AssignUserRoleConfig : IEntityTypeConfiguration<UserRoles>
+    internal class UserRoleConfig : IEntityTypeConfiguration<UserRole>
     {
-        public void Configure(EntityTypeBuilder<UserRoles> builder)
+        public void Configure(EntityTypeBuilder<UserRole> builder)
         {
             builder.ToTable("UserRoles");
             builder.HasKey(x => x.RoleId);
