@@ -149,5 +149,23 @@ namespace TaskManagement.Application.Services
                 return false;
             }
         }
+
+        public async Task<bool> DeleteTask(int id)
+        {
+            var existingTask = await _taskRepository.GetAsync(t => t.TaskId == id, true);
+            if (existingTask == null)
+            {
+                throw new KeyNotFoundException("Task not found");
+            }
+                var isDeleted = await _taskRepository.DeleteAsync(t => t.TaskId == existingTask.TaskId);
+                if (isDeleted)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+            }
+        }
     }
 }

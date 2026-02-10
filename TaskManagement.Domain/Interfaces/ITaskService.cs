@@ -19,6 +19,7 @@ namespace TaskManagement.Domain.Interfaces
         // partial updating task status
         Task<bool> PartialUpdatingTaskStatus(TaskTable task);
         Task<bool> Delete(int id);
+        Task<bool> DeleteTask(int id);
 
 
 

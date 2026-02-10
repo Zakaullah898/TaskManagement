@@ -348,5 +348,41 @@ namespace TaskManagement.Web.Controllers
             }
 
         }
+
+        // Deleting task endpoint
+        [Authorize(Roles = "Manager,Admin")]
+        [HttpDelete("Dashboard/DeleteTask")]
+        //[Route("Dashboard/DeleteTask")]
+        public async Task<IActionResult> DeleteTask(int id)
+        {
+            try
+            {
+                // Logic to delete a task can be added here
+                var isDeleted = await _taskService.DeleteTask(id);
+                if (isDeleted)
+                {
+                    TempData["Delete"] = "Task deleted successfully.";
+                    return Ok("Task deleted successfully.");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to delete the task.";
+                    TempData["AlertType"] = "error";
+                    return BadRequest("Failed to delete the task.");
+                }
+            }
+            catch (KeyNotFoundException k)
+            {
+                _logger.LogError("Error : ", k);
+                TempData["ErrorMessage"] = k.Message;
+                TempData["AlertType"] = "error";
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting the task.");
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+        }
     }
 }

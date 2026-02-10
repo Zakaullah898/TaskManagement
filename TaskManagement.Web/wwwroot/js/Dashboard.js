@@ -194,6 +194,15 @@ const  selectedStatus = document.getElementById('userStatus'); // Convert boolea
         updatingUser(userData); // your function
         return; // Stop further processing
     }
+
+    // Check for Delete Task button
+    const deleteTaskBtn = e.target.closest('.delete-task-btn');
+    if (deleteTaskBtn) {
+        const taskId = deleteTaskBtn.dataset.taskId;
+        console.log("Delete Task ID:", taskId);
+        deletingTask(taskId); // your function
+        return; // Stop further processing
+    }
 });
 
 // Deleting user
@@ -275,4 +284,51 @@ function updatingUser(userData) {
             'error'
         );
     });
+}
+
+// Deleting task
+function deletingTask(taskId)
+{
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/Dashboard/DeleteTask?id=${taskId}`, {
+                method: 'DELETE'
+             }).then(data => {
+                 console.log(data);
+                 if (data.ok) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Task has been deleted.',
+                            'success'
+                        );
+                        // Reload the task list
+                        loadTasksToTable();
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'There was an error deleting the task.',
+                            'error'
+                     );
+                     loadTasksToTable();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire(
+                        'Error!',
+                        'There was an error deleting the task.',
+                        'error'
+                    );
+                    loadTasksToTable();
+                });
+        }
+    })
 }
