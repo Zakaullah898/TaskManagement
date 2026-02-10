@@ -11,6 +11,8 @@ namespace TaskManagement.Domain.Interfaces
     {
         Task<List<AppUser>> GetAllUsers();
         Task<AppUser> GetUserById(string id);
-        
+        Task<bool> VarifyEmail(string email);
+        Task<bool> ResetPassword(string password, string email);
+
     }
 }

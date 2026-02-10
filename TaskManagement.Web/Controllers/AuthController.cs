@@ -19,17 +19,20 @@ namespace TaskManagement.Web.Controllers
         private readonly AppDbContext _context;
         private readonly ITaskManagementRepo<UserRole> _userRolesRepo;
         private readonly IAssignUserRoleRepo _assignUserRoleRepo;
+        private readonly IAuthService _authService;
         public AuthController(
             IHelperMethods helperMethods,
             AppDbContext context,
             ITaskManagementRepo<UserRole> userRolesRepo,
-            IAssignUserRoleRepo assignUserRoleRepo
+            IAssignUserRoleRepo assignUserRoleRepo,
+            IAuthService authService
             )
         {
             _helperMethods = helperMethods;
             _context = context;
             _userRolesRepo = userRolesRepo;
             _assignUserRoleRepo = assignUserRoleRepo;
+            _authService = authService;
         }
         public IActionResult Register()
         {
@@ -76,13 +79,13 @@ namespace TaskManagement.Web.Controllers
                     var role = await _userRolesRepo.GetAsync(r => r.RoleName == "Employee");
                     if (role != null)
                     {
-                       
+
                         var assignRole = new AssignUserRole
                         {
                             UserId = u.Id,
                             RoleId = role.RoleId
                         };
-                        var isCreated= await _assignUserRoleRepo.CreateAsync(assignRole);
+                        var isCreated = await _assignUserRoleRepo.CreateAsync(assignRole);
                         if (isCreated)
                         {
 
@@ -91,7 +94,7 @@ namespace TaskManagement.Web.Controllers
                         }
 
                     }
-                    
+
 
                     return RedirectToAction("Login");
                 }
@@ -135,13 +138,13 @@ namespace TaskManagement.Web.Controllers
                     // Validate user (DB check)
                     if (result)
                     {
-                        var UserRoles = await  _assignUserRoleRepo.GettingRoleIds(u =>u.UserId == user.Id);
+                        var UserRoles = await _assignUserRoleRepo.GettingRoleIds(u => u.UserId == user.Id);
 
                         var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, user!.UserName!),
                             new Claim("UserId", user.Id!.ToString()!),
-                            
+
                         };
                         foreach (var role in UserRoles)
                         {
@@ -186,6 +189,68 @@ namespace TaskManagement.Web.Controllers
         {
             await HttpContext.SignOutAsync("Cookies");
             return RedirectToAction("Login", "Auth");
+        }
+
+        // Method for varify email
+        [HttpGet]
+        public IActionResult GettingVerifyEmail()
+        {
+            return PartialView("_VarifyEmail");
+        }
+        // verify the user
+        [HttpPost("Auth/GettingVerifyEmail")]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailDTO model)
+        {
+            try 
+            {
+                var verifyEmail = await _authService.VarifyEmail(model.Email!);
+                if (verifyEmail)
+                {
+                      
+                    return PartialView("_ResetNewPassword", model.Email);
+                }
+                else
+                {
+                    return PartialView("_VarifyEmail");
+                }
+
+            }
+            catch(ArgumentNullException e)
+            {
+                TempData["Error"] = e.Message;
+                return PartialView("_VarifyEmail");
+            }
+            catch (Exception ex) 
+            {
+                TempData["Error"] = "An error occurred while processing your request.";
+                return PartialView("_VarifyEmail");
+            }
+        }
+
+        // Resetting Password 
+        [HttpPut("Auth/ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        {
+            try 
+            {
+                var isPasswordReset = await _authService.ResetPassword(model.Password!, model.Email!);
+                if (isPasswordReset)
+                {
+                    return Ok(new {response ="Password is updated successfully"});
+                }
+                else 
+                {
+                    return BadRequest();
+                }
+            }
+            catch(ArgumentNullException ex) 
+            {
+                return BadRequest(ex);
+            }
+            catch(Exception e)
+            {
+                return BadRequest("An error occurred while resetting password.");
+            }
         }
     }
 }
