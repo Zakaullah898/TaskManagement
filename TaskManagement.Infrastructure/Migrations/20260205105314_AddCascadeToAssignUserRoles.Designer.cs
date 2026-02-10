@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskManagement.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TaskManagement.Infrastructure.Data;
 namespace TaskManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260205105314_AddCascadeToAssignUserRoles")]
+    partial class AddCascadeToAssignUserRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -231,9 +234,7 @@ namespace TaskManagement.Infrastructure.Migrations
                 {
                     b.HasOne("TaskManagement.Domain.Entities.AppUser", "AssignedToUser")
                         .WithMany("TaskAssignments")
-                        .HasForeignKey("AssignedToUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_TaskAssignment_AppUser");
+                        .HasForeignKey("AssignedToUserId");
 
                     b.HasOne("TaskManagement.Domain.Entities.TaskTable", "Task")
                         .WithMany("TaskAssignments")

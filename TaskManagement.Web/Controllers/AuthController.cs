@@ -125,6 +125,12 @@ namespace TaskManagement.Web.Controllers
                         ModelState.AddModelError(string.Empty, "Invalid username or password.");
                         return RedirectToAction("Login");
                     }
+                    if (!user.IsActive)
+                    {
+                        TempData["Error"] = "Your account is inactive. Please contact the administrator.";
+                        ModelState.AddModelError(string.Empty, "Your account is inactive. Please contact the administrator.");
+                        return RedirectToAction("Login");
+                    }
                     bool result = _helperMethods.VerifyPassword(dto.EnteredPassword!, user?.PasswordHash!, user?.Salt!);
                     // Validate user (DB check)
                     if (result)

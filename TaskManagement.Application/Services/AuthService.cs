@@ -11,21 +11,21 @@ namespace TaskManagement.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly ITaskManagementRepo<AppUser> _userRepo;
+        private readonly ITaskManagementRepo<AppUser> _AppUserRepo;
         IMapper _mapper;
 
-        public AuthService(ITaskManagementRepo<AppUser> userRepo, IMapper mapper) 
+        public AuthService(ITaskManagementRepo<AppUser> AppUserRepo, IMapper mapper) 
         { 
             _mapper = mapper;
-            _userRepo = userRepo;
+            _AppUserRepo = AppUserRepo;
         }
         public async Task<AppUser> GetUserById(string id)
         {
-            return await _userRepo.GetAsync(u=> u.Id == id);
+            return await _AppUserRepo.GetAsync(u=> u.Id == id);
         }
         public async Task<List<AppUser>> GetAllUsers()
         {
-            return await _userRepo.GetAllAsync();
+            return await _AppUserRepo.GetAllAsync();
         }
 
 

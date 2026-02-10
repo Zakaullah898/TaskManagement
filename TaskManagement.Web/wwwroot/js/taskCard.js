@@ -1,10 +1,17 @@
-﻿$(document).ready(function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
     showLoader();
+
     const currentView = localStorage.getItem("currentView");
-    if (currentView === "assigned") loadAllAssigned();
-    else if (currentView === "deleted") openDeletedTasks();
-    else loadTasks();
+
+    if (currentView === "assigned") {
+        loadAllAssigned();
+    } else if (currentView === "deleted") {
+        openDeletedTasks();
+    } else {
+        loadTasks();
+    }
 });
+
 
 document.addEventListener('click', function (e) {
     if (e.target && e.target.id === 'showModal') {

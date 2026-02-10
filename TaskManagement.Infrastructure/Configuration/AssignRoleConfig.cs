@@ -23,12 +23,15 @@ namespace TaskManagement.Infrastructure.Configuration
             builder.HasOne(ar => ar.User)
                    .WithMany(u => u.AssignRoles)
                    .HasForeignKey(ar => ar.UserId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.Cascade)
+                   .HasConstraintName("FK_AssignUserRoles_Users_UserId");
             // Define foreign key relationship with UserRoles
             builder.HasOne(ar => ar.Role)
                    .WithMany(r => r.AssignRoles)
                    .HasForeignKey(ar => ar.RoleId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.Cascade)
+                   .HasConstraintName("FK_AssignUserRoles_Roles_RoleId");
+
         }
     }
 }

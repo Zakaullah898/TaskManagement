@@ -13,6 +13,6 @@ namespace TaskManagement.Domain.Interfaces
         Task<T> GetAsync(Expression<Func<T, bool>> Filter, bool UseNoTracking = false);
         Task<bool> CreateAsync(T entity);
         Task<bool> UpdateAsync(T entity);
-        Task<T> DeleteAsync(Expression<Func<T, bool>> Filter);
+        Task<bool> DeleteAsync(Expression<Func<T, bool>> Filter);
     }
 }

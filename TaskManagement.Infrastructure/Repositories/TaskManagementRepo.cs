@@ -39,16 +39,23 @@ namespace TaskManagement.Infrastructure.Repositories
 
         }
 
-        public async Task<T> DeleteAsync(Expression<Func<T, bool>> Filter)
+        public async Task<bool> DeleteAsync(Expression<Func<T, bool>> Filter)
         {
             var entity = await _dbSet.Where(Filter).FirstOrDefaultAsync();
             if(entity == null)
             {
                 throw new KeyNotFoundException("This entity is not found");
             }
-            _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            try
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
         }
 
         public async Task<List<T>> GetAllAsync()

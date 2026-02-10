@@ -23,7 +23,9 @@ namespace TaskManagement.Infrastructure.Configuration
             // Relationships
             builder.HasOne(ta => ta.AssignedToUser)
                 .WithMany(u => u.TaskAssignments)
-                .HasForeignKey(ta => ta.AssignedToUserId);
+                .HasForeignKey(ta => ta.AssignedToUserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                   .HasConstraintName("FK_TaskAssignment_AppUser");
 
 
         }

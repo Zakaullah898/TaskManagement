@@ -6,7 +6,7 @@
     <hr> *@
     <ul class="nav nav-pills flex-column mb-auto" id="sidebarMenu">
         <li class="nav-item">
-            <a class="nav-link text-dark active" asp-area="" asp-controller="Home" asp-action="Index">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index" id="home">
                 <i class="bi bi-house me-2"></i>
                 <span class="sidebar-text">Home</span>
             </a>
@@ -14,7 +14,7 @@
         @if (User.IsInRole("Manager"))
         {
             <li class="nav-item">
-                <a  class="nav-link link-dark" asp-controller="Dashboard" asp-action="AdminDashboard">
+                <a  class="nav-link link-dark" asp-controller="Dashboard" asp-action="AdminDashboard" id="dashboard">
                     <i class="bi bi-speedometer2 me-2"></i>
                     <span class="sidebar-text">Dashboard</span>
                 </a>
