@@ -25,6 +25,7 @@ namespace TaskManagement.Infrastructure.Configuration
             builder.Property(x => x.DateRegistered).IsRequired();
             builder.Property(x => x.LastLogin);
             builder.Property(x => x.IsActive).IsRequired();
+            builder.Property(x => x.HasProfile).IsRequired();
 
         }
     }

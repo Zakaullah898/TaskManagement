@@ -1,0 +1,88 @@
+﻿@model TaskManagement.Application.DTOs.GettingUserProfileDTO;
+@{
+}
+
+<div class="container py-5">
+
+    <div class="card profile-card p-4">
+
+        <div class="row align-items-center">
+
+            <!-- Profile Image Section -->
+            <div class="col-md-4 text-center mb-4 mb-md-0">
+                <img src="@(string.IsNullOrEmpty(Model.ProfileImagePath)
+                                                              ? Url.Content("~/images/default/default-profile.png")
+                                                              : Url.Content(Model.ProfileImagePath))"
+                     class="rounded-circle profile-img"
+                     alt="Profile Picture">
+
+                <h4 class="mt-3">@Model.UserName</h4>
+                @foreach (var role in Model.Role!)
+                {
+                    <span class="badge bg-danger role-badge">@role</span>
+                }
+            </div>
+
+            <!-- Personal Information Section -->
+            <div class="col-md-8">
+
+                <h5 class="mb-4 border-bottom pb-2">Personal Information</h5>
+
+                <div class="row g-3">
+
+                    <div class="col-sm-6">
+                        <strong>First Name:</strong>
+                        <p class="mb-0">@Model.FirstName</p>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <strong>Last Name:</strong>
+                        <p class="mb-0">@Model.LastName</p>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <strong>Username:</strong>
+                        <p class="mb-0">@Model.UserName</p>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <strong>Email:</strong>
+                        <p class="mb-0">@Model.Email</p>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <strong>Phone Number:</strong>
+                        <p class="mb-0">@Model.PhoneNumber</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Role:</strong>
+                        @foreach (var role in Model.Role!)
+                        {
+                            <p class="mb-0">@role</p>
+                        }
+                    </div>
+
+                    <div class="col-sm-6">
+                        <strong>Job Title:</strong>
+                        <p class="mb-0">@Model.JobTitle</p>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <strong>Date Joined:</strong>
+                        <p class="mb-0">@Model.DateJoined</p>
+                    </div>
+
+                </div>
+
+                <!-- Update Button Added -->
+                <div class="text-end mt-4">
+                    <a asp-action="UpdateProfile"  class="btn btn-primary">
+                        Update
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -21,6 +21,8 @@ namespace TaskManagement.Infrastructure.Data
         public virtual DbSet<TaskTable> TaskTable { get; set; }
         public virtual DbSet<TaskAssignments> TaskAssignments { get; set; }
         public virtual DbSet<AssignUserRole> AssignUserRoles { get; set; }
+        public virtual DbSet<OTP> OTPs { get; set; }
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
             modelBuilder.ApplyConfiguration(new AppUserConfig());
@@ -28,6 +30,7 @@ namespace TaskManagement.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new TaskTableConfig());
             modelBuilder.ApplyConfiguration(new TaskAssignmentsConfig());
             modelBuilder.ApplyConfiguration(new AssignRoleConfig());
+            modelBuilder.ApplyConfiguration(new UserProfileConfig());
         }
 
         }

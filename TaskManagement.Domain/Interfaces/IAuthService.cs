@@ -10,9 +10,11 @@ namespace TaskManagement.Domain.Interfaces
     public interface IAuthService
     {
         Task<List<AppUser>> GetAllUsers();
+        Task<AppUser> GetUserByEmail(string email);
         Task<AppUser> GetUserById(string id);
         Task<bool> VarifyEmail(string email);
         Task<bool> ResetPassword(string password, string email);
+        Task SendOtpEmail(string email, string otp);
 
     }
 }

@@ -1,0 +1,94 @@
+﻿@model TaskManagement.Application.DTOs.UserProfileDTO;
+
+<div class="container py-5">
+
+    <div class="card shadow p-4">
+
+        <h3 class="mb-4 text-center">Create User Profile</h3>
+
+        <form asp-action="UpdateProfile" method="post" enctype="multipart/form-data">
+
+            <div class="row g-3">
+
+                <!-- Profile Image -->
+                <div class="col-12 text-center">
+                    <img id="previewImage"
+                         src="@(string.IsNullOrEmpty(Model.ProfileImagePath)
+                                         ? Url.Content("~/images/default/default-profile.png")
+                                         : Url.Content(Model.ProfileImagePath))"
+                         class="rounded-circle mb-3"
+                         style="width:150px;height:150px;object-fit:cover;" />
+                    <input type="hidden" asp-for="ProfileImagePath" />
+
+                    <input type="file"
+                           asp-for="ProfileImage"
+                           class="form-control"
+                           accept="image/*"
+                           onchange="previewFile(this)" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">First Name</label>
+                    <input asp-for="FirstName" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Last Name</label>
+                    <input asp-for="LastName" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Username</label>
+                    <input asp-for="UserName" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input asp-for="Email" type="email" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Job Title</label>
+                    <input asp-for="JobTitle" class="form-control" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Date Joined</label>
+                    <input asp-for="DateJoined" type="date" class="form-control" />
+                </div>
+
+                <div class="col-12 text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-5">
+                        Update Profile
+                    </button>
+
+                    <!-- Go Back Button Added -->
+                    <a asp-action="Profile" class="btn btn-secondary px-5 ms-2">
+                        Go Back to Profile
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewFile(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("previewImage").src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+}

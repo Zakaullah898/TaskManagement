@@ -1,6 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 
 @model TaskManagement.Application.DTOs.LoginUserDTO;
 @{
@@ -15,7 +13,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body loging-form">
-                    <form asp-action="Login">
+                    <form asp-action="Login" method="post">
 
                         <div class="form-group mb-3 ">
                             <label asp-for="Email" class="control-label"></label>
@@ -23,27 +21,31 @@
                                    asp-for="Email"
                                    class="form-control"
                                    placeholder="Email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
-                            
-                        <div class="form-group mb-3">
+
+                        <div class="form-group mb-3 position-relative">
                             <label asp-for="EnteredPassword" class="control-label"></label>
                             <input type="password"
                                    asp-for="EnteredPassword"
-                                   class="form-control"
-                                   placeholder="Password" />
+                                   class="form-control pe-5"
+                                   placeholder="Password"
+                                   id="passwordField" />
+                            <span class="password-toggle" style="position:absolute; right:10px; top:72%; transform:translateY(-50%); cursor:pointer;">
+                                <i id="passwordIcon" class="bi bi-eye"></i>
+                            </span>
+                            <span asp-validation-for="EnteredPassword" class="text-danger"></span>
                         </div>
-                        
 
                         <button class="btn btn-danger">
                             Login
                         </button>
                     </form>
 
-                    <div class="mt-2" id="goToVerifyEmail">
-                        <button type="button" class="btn btn-link text-decoration-none" >
+                    <div class="mt-2">
+                        <a type="button" class="btn btn-link text-decoration-none" asp-controller="Auth" asp-action="VerifyEmail">
                             Forgot Password?
-                        </button>
-
+                        </a>
                     </div>
 
                     <p class="mt-3">
@@ -58,6 +60,7 @@
         </div>
     </div>
 </div>
+
 
 
 @section Scripts {

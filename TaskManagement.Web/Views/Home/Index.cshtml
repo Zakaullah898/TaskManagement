@@ -98,12 +98,12 @@
             });
         </script>
     }
-    @if (TempData["Success"] != null)
+    @if (TempData["Notification"] != null)
     {
         <script>
             Swal.fire({
                 title: 'Success!',
-                text: '@TempData["Success"]',
+                text: '@TempData["Notification"]',
                 icon: 'success',
                 timer: 1500,
                 confirmButtonText: 'OK'
@@ -120,6 +120,8 @@
                 timer: 2000,
                 confirmButtonText: 'OK'
             });
+
         </script>
+        TempData["ErrorMessage"] = null;
     }
     }

@@ -10,5 +10,7 @@ namespace TaskManagement.Domain.Interfaces
     {
         PasswordHashResult HashPassword(string password);
          bool VerifyPassword(string enteredPassword, string storedHash, string storedSalt);
+        string GenerateSecureOtp();
+        string HashOtp(string otp);
     }
 }

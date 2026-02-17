@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TaskManagement.Application.DTOs;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Interfaces;
 using TaskManagement.Infrastructure.Data;
-using TaskManagement.Application.DTOs;
 using TaskManagement.Infrastructure.Utilities;
 
 namespace TaskManagement.Web.Controllers
@@ -20,12 +21,14 @@ namespace TaskManagement.Web.Controllers
         private readonly ITaskManagementRepo<UserRole> _userRolesRepo;
         private readonly IAssignUserRoleRepo _assignUserRoleRepo;
         private readonly IAuthService _authService;
+        private readonly ITaskManagementRepo<OTP> _OtpRepo;
         public AuthController(
             IHelperMethods helperMethods,
             AppDbContext context,
             ITaskManagementRepo<UserRole> userRolesRepo,
             IAssignUserRoleRepo assignUserRoleRepo,
-            IAuthService authService
+            IAuthService authService,
+            ITaskManagementRepo<OTP> OtpRepo
             )
         {
             _helperMethods = helperMethods;
@@ -33,6 +36,7 @@ namespace TaskManagement.Web.Controllers
             _userRolesRepo = userRolesRepo;
             _assignUserRoleRepo = assignUserRoleRepo;
             _authService = authService;
+            _OtpRepo = OtpRepo;
         }
         public IActionResult Register()
         {
@@ -71,6 +75,7 @@ namespace TaskManagement.Web.Controllers
                         LastName = dto.LastName!,
                         Email = dto.Email,
                         DateRegistered = DateTime.Now,
+                        IsActive = true,
                         PasswordHash = result.Hash,
                         Salt = result.Salt,
                     };
@@ -138,7 +143,7 @@ namespace TaskManagement.Web.Controllers
                     // Validate user (DB check)
                     if (result)
                     {
-                        var UserRoles = await _assignUserRoleRepo.GettingRoleIds(u => u.UserId == user.Id);
+                        var UserRoles = await _assignUserRoleRepo.GettingRoleIds(u => u.UserId == user!.Id);
 
                         var claims = new List<Claim>
                         {
@@ -160,10 +165,18 @@ namespace TaskManagement.Web.Controllers
                         HttpContext.SignInAsync("Cookies", principal);
 
                         TempData["Success"] = "Login successful.";
+                        var hasProfile = user.HasProfile;
                         user.LastLogin = DateTime.Now;
                         _context.AppUsers.Update(user);
                         _context.SaveChanges();
-                        return RedirectToAction("Index", "Home");
+                        if (hasProfile)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            return RedirectToAction("CreateUserProfile", "UserProfile");
+                        }
                     }
                     else
                     {
@@ -193,64 +206,177 @@ namespace TaskManagement.Web.Controllers
 
         // Method for varify email
         [HttpGet]
-        public IActionResult GettingVerifyEmail()
+        public IActionResult VerifyEmail()
         {
-            return PartialView("_VarifyEmail");
+            return View();
         }
         // verify the user
-        [HttpPost("Auth/GettingVerifyEmail")]
+        [HttpPost]
         public async Task<IActionResult> VerifyEmail(VerifyEmailDTO model)
         {
-            try 
+            if (!ModelState.IsValid)
+                return View("VerifyEmail", model);
+
+            try
             {
-                var verifyEmail = await _authService.VarifyEmail(model.Email!);
-                if (verifyEmail)
+
+
+                var user = await _authService.GetUserByEmail(model.Email!);
+                if (user != null)
                 {
-                      
-                    return PartialView("_ResetNewPassword", model.Email);
+                    var otpRecord =await _OtpRepo.GetAllAsync();
+                    foreach(var otprec in otpRecord)
+                    {
+                        
+                        if (otprec.UserId  == user.Id)
+                        {
+                            await _OtpRepo.DeleteAsync(o => o.UserId == user.Id);
+                        }
+                    }
+
+                    var otp = _helperMethods.GenerateSecureOtp();
+                    var HashingOtp = _helperMethods.HashOtp(otp);
+                    var email = user.Email;
+                    var newOtp = new OTP
+                    {
+                        UserId = user.Id,
+                        IsUsed = false,
+                        Email = email,
+                        OtpHash = HashingOtp,
+                        ExpiryTime = DateTime.UtcNow.AddMinutes(5),
+                        AttemptCount = 0,
+                        CreatedAt = DateTime.UtcNow,
+                    };
+                    await _authService.SendOtpEmail(email!, otp);
+                    await _OtpRepo.CreateAsync(newOtp);
+                    var verifyOtp = new VerifyOtpDTO
+                    {
+                        Email = model.Email
+                    };
+                    TempData["Success"] = "Your Email verfy successfully.";
+                    return View("VerifyOtp", verifyOtp);
                 }
                 else
                 {
-                    return PartialView("_VarifyEmail");
+                    ModelState.AddModelError("", "Email not found.");
+                    return View("VerifyEmail", model);
                 }
-
             }
-            catch(ArgumentNullException e)
+            catch (ArgumentNullException e)
             {
                 TempData["Error"] = e.Message;
-                return PartialView("_VarifyEmail");
+                return View("VerifyEmail", model);
             }
-            catch (Exception ex) 
+            catch (Exception)
             {
                 TempData["Error"] = "An error occurred while processing your request.";
-                return PartialView("_VarifyEmail");
+                return View("VerifyEmail", model);
             }
+        }
+
+        // go to verfy otp view 
+        public IActionResult VerifyOtp()
+        {
+            return View();
+        }
+        // Veryfying otp 
+        [HttpPost]
+        public async Task<IActionResult> VerifyOtp(VerifyOtpDTO model)
+        {
+            var user = await _authService.GetUserByEmail(model.Email!);
+            if (user == null)
+            {
+                TempData["Error"] = "Invalid Request";
+                View("VerifyOtp");
+            }
+
+            var otpRecord = await _OtpRepo.GetAsync(o => o.UserId == user!.Id);
+
+            if (otpRecord == null) 
+            {
+                TempData["Error"] = "OTP not found";
+                View("VerifyOtp");
+            }
+
+
+            if (otpRecord!.ExpiryTime < DateTime.UtcNow) 
+            {
+                TempData["Error"] = "OTP not use to longer";
+                return View("VerifyOtp");
+            }
+
+            if (otpRecord.IsUsed) 
+            {
+                TempData["Error"] = "OTP already used.";
+                return BadRequest("OTP already used.");
+            }
+
+            if (otpRecord.AttemptCount >= 3) 
+            {
+                TempData["Error"] = "You reach you attempt limit";
+                return View("VerifyOtp");
+            }
+
+            var hashedInput = _helperMethods.HashOtp(model.Otp!);
+
+            if (hashedInput != otpRecord.OtpHash)
+            {
+                otpRecord.AttemptCount++;
+                await _OtpRepo.UpdateAsync(otpRecord);
+                TempData["Error"] = "Invalid OTP.";
+                return View("VerifyOtp");
+            }
+
+            otpRecord.IsUsed = true;
+            await _OtpRepo.UpdateAsync(otpRecord);
+            TempData["Success"] = "OTP verified successfully.";
+            var resetPasswordDto = new ResetPasswordDTO
+            {
+                Email = model.Email
+            };
+            return View("ResetPassword", resetPasswordDto);
         }
 
         // Resetting Password 
-        [HttpPut("Auth/ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        [HttpGet]
+        public IActionResult ResetPassword()
         {
-            try 
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
             {
-                var isPasswordReset = await _authService.ResetPassword(model.Password!, model.Email!);
+                var isPasswordReset = await _authService.ResetPassword(model.NewPassword!, model.Email!);
                 if (isPasswordReset)
                 {
-                    return Ok(new {response ="Password is updated successfully"});
+                    TempData["Success"] = "Password is updated successfully.";
+                    return RedirectToAction("Login", "Auth");
                 }
-                else 
+                else
                 {
-                    return BadRequest();
+                    TempData["Error"] = "Password updating is failed";
+                    return View(model);
                 }
             }
-            catch(ArgumentNullException ex) 
+            catch (ArgumentNullException ex)
             {
-                return BadRequest(ex);
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
             }
-            catch(Exception e)
+            catch (Exception)
             {
-                return BadRequest("An error occurred while resetting password.");
+                TempData["Error"] = "An error occurred while resetting password.";
+                ModelState.AddModelError("", "An error occurred while resetting password.");
+                return View(model);
             }
         }
+
+    
+
     }
 }

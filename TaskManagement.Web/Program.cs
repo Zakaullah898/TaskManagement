@@ -20,6 +20,7 @@ builder.Services.AddScoped<IHelperMethods,HelperMethods>();
 builder.Services.AddScoped(typeof(ITaskManagementRepo<>), typeof(TaskManagementRepo<>));
 builder.Services.AddScoped<IAssignUserRoleRepo, AssignUserRoleRepo>();
 builder.Services.AddScoped<IDashboardServices, DashboardServices>();
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
 // Adding dependency injection for Services
 builder.Services.AddScoped<ITaskService, TaskService>();

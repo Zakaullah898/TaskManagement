@@ -21,6 +21,8 @@
                               @item.Status
                             }
                             </div>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        {    
                         <div class="col-6 text-white text-end">
                             <div class="dropdown ">
                                 <i 
@@ -30,8 +32,6 @@
                                    aria-expanded="true"
                                 ></i>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-card">
-                                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
-                                        {    
                                             <li><button
                                             type="button"
                                             id="showModal"
@@ -42,16 +42,17 @@
                                            >Assign Task</button></li>
                                           <li><a class="dropdown-item" asp-controller="Tasks" asp-action="UpdateTask" asp-route-id="@item.TaskId">Edit</a></li>
                                             <li><button class="dropdown-item" onclick="conformationDelete(@item.TaskId)">Delete</button></li>
-                                        }
-                                        else
+                                        @* }
+                                        else if(item.AssignedToUserName != null)
                                         {
                                             <li><button class="dropdown-item status-btn" data-task-id="@item.TaskId" data-status="InProgress">InProgress</button></li>
                                             <li><button class="dropdown-item status-btn" data-task-id="@item.TaskId" data-status="Completed">Completed</button></li>
                                             <li><button class="dropdown-item status-btn" data-task-id="@item.TaskId" data-status="OnHold">OnHold</button></li>
-                                        }
+                                        } *@
                                     </ul>
                             </div>
                         </div>
+                       }
                     </div>
                     
                 </div>

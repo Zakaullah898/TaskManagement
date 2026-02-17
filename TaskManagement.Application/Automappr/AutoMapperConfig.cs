@@ -18,6 +18,8 @@ namespace TaskManagement.Application.Automappr
             CreateMap<RegisterUserDTO, AssignUserRole>().ReverseMap();
             CreateMap<TaskTableDTO, TaskTable>().ReverseMap();
             CreateMap<UserDTO, AppUser>().ReverseMap();
+            CreateMap<UserProfileDTO, UserProfile>().ReverseMap();
+            CreateMap<GettingUserProfileDTO, UserProfile>().ReverseMap();
         }
     }
 }

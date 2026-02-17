@@ -40,6 +40,9 @@ namespace TaskManagement.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("HasProfile")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -94,6 +97,42 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AssignUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("TaskManagement.Domain.Entities.OTP", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OtpHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OTPs");
                 });
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.TaskAssignments", b =>
@@ -184,6 +223,61 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.ToTable("TaskTable", (string)null);
                 });
 
+            modelBuilder.Entity("TaskManagement.Domain.Entities.UserProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateJoined")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .HasColumnType("nvarchar(350)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfileImagePath")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
+
+                    b.ToTable("UserProfiles", (string)null);
+                });
+
             modelBuilder.Entity("TaskManagement.Domain.Entities.UserRole", b =>
                 {
                     b.Property<int>("RoleId")
@@ -227,6 +321,15 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TaskManagement.Domain.Entities.OTP", b =>
+                {
+                    b.HasOne("TaskManagement.Domain.Entities.AppUser", "User")
+                        .WithMany("OTPs")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TaskManagement.Domain.Entities.TaskAssignments", b =>
                 {
                     b.HasOne("TaskManagement.Domain.Entities.AppUser", "AssignedToUser")
@@ -255,11 +358,25 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TaskManagement.Domain.Entities.UserProfile", b =>
+                {
+                    b.HasOne("TaskManagement.Domain.Entities.AppUser", "AppUser")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("TaskManagement.Domain.Entities.UserProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("TaskManagement.Domain.Entities.AppUser", b =>
                 {
                     b.Navigation("AssignRoles");
 
+                    b.Navigation("OTPs");
+
                     b.Navigation("TaskAssignments");
+
+                    b.Navigation("UserProfile");
                 });
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.TaskTable", b =>

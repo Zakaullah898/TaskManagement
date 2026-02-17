@@ -1,0 +1,53 @@
+﻿@model TaskManagement.Application.DTOs.VerifyEmailDTO;
+@{
+    ViewData["Title"] = "Verify Email";
+}
+
+<h1 class="text-success text-center">
+    Task Management
+</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body loging-form">
+
+                    <form asp-action="VerifyEmail" method="post" novalidate>
+                        <div class="form-group mb-3">
+                            <label class="control-label">Email</label>
+                            <input type="email"
+                                   class="form-control"
+                                   placeholder="Enter your email to verify"
+                                   id="email"
+                                   name="Email"
+                                   asp-for="Email"
+                                   required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 submit-btn">
+                            Verify
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+           @if (TempData["Error"] != null)
+    {
+        <script>
+                        Swal.fire({
+                icon: 'AlertType',
+                title: 'Wrong Credential',
+                text: '@TempData["Error"]',
+                timer: 1500,
+                showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
+}

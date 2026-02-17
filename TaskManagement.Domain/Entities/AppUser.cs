@@ -11,8 +11,8 @@ namespace TaskManagement.Domain.Entities
     {
         public string? Id { get; set; }
         public string? UserName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public DateTime DateRegistered { get; set; }
         public DateTime LastLogin { get; set; }
         [Required, EmailAddress]
@@ -22,9 +22,12 @@ namespace TaskManagement.Domain.Entities
         public string? Salt { get; set; }
         public bool isLogin { get; set; } = false;
         public bool IsActive { get; set; }
+        public bool HasProfile { get; set; }
 
         public virtual ICollection<TaskAssignments>? TaskAssignments { get; set; }
         public virtual ICollection<AssignUserRole>? AssignRoles { get; set; }
+        public virtual ICollection<OTP>? OTPs { get; set; }
+        public virtual UserProfile? UserProfile { get; set; }
 
     }
 }

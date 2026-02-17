@@ -1,0 +1,154 @@
+﻿@model TaskManagement.Application.DTOs.VerifyOtpDTO;
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+
+                    <h5 class="mb-3">A code has been sent to your email</h5>
+
+                    <form asp-action="VerifyOtp" method="post" id="otpForm">
+                        <input type="hidden" asp-for="Email" />
+                        <input type="hidden" asp-for="Otp" id="Otp" />
+
+                        <div class="d-flex justify-content-center gap-2 mb-3">
+                            <input type="text" class="form-control text-center otp-box" maxlength="1" inputmode="numeric" />
+                            <input type="text" class="form-control text-center otp-box" maxlength="1" inputmode="numeric" />
+                            <input type="text" class="form-control text-center otp-box" maxlength="1" inputmode="numeric" />
+                            <input type="text" class="form-control text-center otp-box" maxlength="1" inputmode="numeric" />
+                            <input type="text" class="form-control text-center otp-box" maxlength="1" inputmode="numeric" />
+                            <input type="text" class="form-control text-center otp-box" maxlength="1" inputmode="numeric" />
+                        </div>
+
+                        <span asp-validation-for="Otp" class="text-danger d-block mb-2"></span>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            Verify Code
+                        </button>
+                    </form>
+
+                    <!-- Resend Section -->
+                    <div>
+                        <span id="timerText" class="text-muted">Resend code in <span id="timer">60</span>s</span>
+                        <button id="resendBtn" class="btn btn-link text-decoration-none d-none" type="button">
+                            Resend OTP
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+        @if (TempData["Success"] != null)
+    {
+        <script>
+                        Swal.fire({
+                icon: 'AlertType',
+                title: 'Wrong Credential',
+                text: '@TempData["Success"]',
+                timer: 1500,
+                showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
+        @if (TempData["Error"] != null)
+    {
+        <script>
+                        Swal.fire({
+                icon: 'AlertType',
+                title: 'Wrong Credential',
+                text: '@TempData["Error"]',
+                timer: 1500,
+                showConfirmButton: false // Hides the default "OK" butto
+            });
+        </script>
+    }
+    <script>
+        const boxes = document.querySelectorAll('.otp-box');
+        const hiddenOtp = document.getElementById('Otp');
+        const resendBtn = document.getElementById('resendBtn');
+        const timerText = document.getElementById('timerText');
+        const timerSpan = document.getElementById('timer');
+
+        // 🔹 OTP Input Logic
+        boxes.forEach((box, index) => {
+            box.addEventListener('input', () => {
+                box.value = box.value.replace(/[^0-9]/g, '');
+
+                if (box.value && index < boxes.length - 1) {
+                    boxes[index + 1].focus();
+                }
+
+                updateOtp();
+            });
+
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !box.value && index > 0) {
+                    boxes[index - 1].focus();
+                }
+            });
+
+            // 🔹 Paste full OTP support
+            box.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+
+                pastedData.split('').forEach((char, i) => {
+                    if (boxes[i]) {
+                        boxes[i].value = char;
+                    }
+                });
+
+                updateOtp();
+                boxes[Math.min(pastedData.length, boxes.length) - 1]?.focus();
+            });
+        });
+
+        function updateOtp() {
+            hiddenOtp.value = Array.from(boxes).map(b => b.value).join('');
+        }
+
+        // 🔹 Resend OTP Timer Logic
+        let timeLeft = 60;
+
+        function startTimer() {
+            resendBtn.classList.add('d-none');
+            timerText.classList.remove('d-none');
+            timeLeft = 60;
+            timerSpan.textContent = timeLeft;
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerSpan.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timerText.classList.add('d-none');
+                    resendBtn.classList.remove('d-none');
+                }
+            }, 1000);
+        }
+
+        resendBtn.addEventListener('click', () => {
+            resendBtn.disabled = true;
+
+            fetch('/Auth/ResendOtp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: document.querySelector('input[name="Email"]').value })
+            });
+
+            startTimer();
+        });
+
+        // Start timer on page load
+        startTimer();
+    </script>
+}
+}

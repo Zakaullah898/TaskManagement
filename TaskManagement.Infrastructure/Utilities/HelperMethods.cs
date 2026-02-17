@@ -41,5 +41,26 @@ namespace TaskManagement.Infrastructure.Utilities
                 numBytesRequested: 256 / 8));
             return hash == storedHash;
         }
+
+        //public string GenerateOtp()
+        //{
+        //    Random rnd = new Random();
+        //    return rnd.Next(100000, 999999).ToString(); // 6-digit OTP
+        //}
+        public string GenerateSecureOtp()
+        {
+            byte[] bytes = new byte[4];
+            RandomNumberGenerator.Fill(bytes);
+
+            int value = BitConverter.ToInt32(bytes, 0) & 0x7fffffff;
+            return (value % 1000000).ToString("D6"); // 6 digit
+        }
+
+        public string HashOtp(string otp)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(otp));
+            return Convert.ToBase64String(bytes);
+        }
     }
 }
