@@ -14,19 +14,25 @@ namespace TaskManagement.Web.Controllers
         private readonly IUserProfileService  _userProfileService;
         private readonly ITaskManagementRepo<UserRole> _userRolesRepo;
         private readonly IAssignUserRoleRepo _assignUserRoleRepo;
+        private readonly IAuthService _authService;
+        private readonly ICloudinaryService _cloudinaryService;
         IMapper _mapper;
         public UserProfileController
             (
             IUserProfileService userProfileService,
             IMapper mapper,
             ITaskManagementRepo<UserRole> userRolesRepo,
-            IAssignUserRoleRepo assignUserRoleRepo
+            IAssignUserRoleRepo assignUserRoleRepo,
+            IAuthService authService,
+            ICloudinaryService cloudinaryService
             ) 
         {
             _userProfileService = userProfileService;
             _mapper = mapper;
             _userRolesRepo = userRolesRepo;
             _assignUserRoleRepo = assignUserRoleRepo;
+            _authService = authService;
+            _cloudinaryService = cloudinaryService;
         }
         // User profile 
         public async Task<IActionResult> Profile()
@@ -35,11 +41,12 @@ namespace TaskManagement.Web.Controllers
             {
                 var userId = User.FindFirst("UserId")?.Value;
                 var userProfile = await _userProfileService.GetUserProfileById(userId!);
-                
+                var user = await _authService.GetUserById(userId!);
+
                 var profileDto = _mapper.Map<GettingUserProfileDTO>(userProfile);
                 // getting assigned role to the user
                 var assignedRoles = await _assignUserRoleRepo.GettingRoleIds(r => r.UserId == userId);
-                if (assignedRoles != null)
+                if (assignedRoles != null && user.HasProfile)
                 {
                     foreach (var assignedRole in assignedRoles)
                     {
@@ -48,9 +55,13 @@ namespace TaskManagement.Web.Controllers
                         profileDto.Role!.Add(role.RoleName!);
                        
                     }
+                    return View(profileDto);
                 }
-
-                return View(profileDto);
+                else
+                {
+                    TempData["Error"] = "User profile not found. Please create your profile.";
+                    return RedirectToAction("CreateUserProfile", "UserProfile");
+                }
             }
             catch (ArgumentNullException ex)
             {
@@ -80,7 +91,7 @@ namespace TaskManagement.Web.Controllers
             try
             {
                 var userId = User.FindFirst("UserId")?.Value;
-                var profileImageUrl = await _userProfileService.SaveFileAsync(dtoModel.ProfileImage);
+                var profileImageUrl = await _cloudinaryService.UploadImageAsync(dtoModel.ProfileImage!);
                 UserProfile userProfile = new UserProfile
                 {
                     UserId = userId,
@@ -152,7 +163,7 @@ namespace TaskManagement.Web.Controllers
                 var userProfile = _mapper.Map<UserProfile>(dto);
                 if (dto.ProfileImage != null) 
                 {
-                    var profileImageUrl = await _userProfileService.SaveFileAsync(dto.ProfileImage);
+                    var profileImageUrl =  await _cloudinaryService.UploadImageAsync(dto.ProfileImage!); ;
                     userProfile.ProfileImagePath = profileImageUrl;
                 }
                 else
@@ -163,7 +174,8 @@ namespace TaskManagement.Web.Controllers
                var isUpdated = await _userProfileService.UpdatingUserProfile(userProfile);
                 if (isUpdated)
                 {
-                    return RedirectToAction("Profile");
+                    TempData["Success"] = "Profile updated successfully.";
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {

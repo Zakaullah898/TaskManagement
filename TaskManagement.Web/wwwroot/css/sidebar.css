@@ -29,4 +29,37 @@
         color: white;
     }
 
+.main-container {
+    margin-top: 4.2rem;
+}
+:root {
+    --sidebar-collapsed: 4.375rem; /* 70px */
+    --sidebar-expanded: 18.75rem; /* 300px */
+}
 
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    background: #f8f9fa;
+    z-index: 1020;
+}
+
+    /* Expanded */
+    .sidebar.expanded {
+        width: var(--sidebar-expanded);
+    }
+
+/* Main Content */
+.render-body {
+
+    margin-left: var(--sidebar-collapsed);
+    transition: margin-left 0.3s ease;
+}
+
+/* When sidebar expands → shift main */
+.main-expanded {
+    margin-left: var(--sidebar-expanded) !important;
+}

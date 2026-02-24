@@ -17,17 +17,25 @@
 });
 // Write your JavaScript code.
 const sidebar = document.getElementById('sidebar');
+const main = document.querySelector('.render-body');
 const dropdownElement = document.querySelector('.dropdown-menu');
 
 sidebar.addEventListener('mouseenter', () => {
     sidebar.classList.remove('sidebar-collapsed');
+    sidebar.classList.add('expanded');
+    main.classList.add('main-expanded');
 });
 
 sidebar.addEventListener('mouseleave', () => {
     sidebar.classList.add('sidebar-collapsed');
+    sidebar.classList.remove('expanded');
+    main.classList.remove('main-expanded');
     dropdownElement.classList.remove('show');
     dropdownElement.setAttribute('aria-expanded', 'false');
+    
+    
 });
+
 //console.log('Sidebar hover functionality loaded', sidebar);
 // Active link highlighting
 const sidebarMenu = document.getElementById('sidebarMenu');

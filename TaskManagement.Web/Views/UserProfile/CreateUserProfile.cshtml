@@ -82,6 +82,7 @@
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     document.getElementById("previewImage").src = e.target.result;
+                    document.getElementById("navbarProfileImage").src = reader.result;
                 };
                 reader.readAsDataURL(file);
             }

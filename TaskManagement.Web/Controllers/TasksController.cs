@@ -260,7 +260,7 @@ namespace TaskManagement.Web.Controllers
 
         // Updating Tasks endpoint
         [Authorize(Roles = "Manager")]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateTask(TaskTableDTO model)
         {
             try

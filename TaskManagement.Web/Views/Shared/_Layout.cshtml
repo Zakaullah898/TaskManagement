@@ -18,11 +18,28 @@
     <link rel="stylesheet" href="~/TaskManagement.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+    <header class="fixed-top navbar-light bg-light border-bottom shadow">
         <partial name="_NavbarPartial" />
     </header>
 
-    <div class="d-flex flex-nowrap">
+    <div class="d-flex flex-nowrap main-container">
+        @if (User.Identity!.IsAuthenticated)
+        {
+            @* <partial name="_SidebarPartial" /> *@
+            <aside class="sidebar border-end position-fixed" >
+                <partial name="_SidebarPartial" />
+            </aside>
+        }
+        <main class="flex-grow-1 p-4 render-body" >
+            @RenderBody()
+        </main>
+    </div>
+
+    @* <header>
+        <partial name="_NavbarPartial" />
+    </header> *@
+
+    @* <div class="d-flex flex-nowrap">
         @if (User.Identity!.IsAuthenticated)
         {
             <partial name="_SidebarPartial" />
@@ -30,7 +47,7 @@
         <main class="flex-grow-1 p-4">
             @RenderBody()
         </main>
-    </div>
+    </div> *@
 
     <footer class="border-top footer text-muted">
         <div class="container">

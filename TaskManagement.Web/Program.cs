@@ -1,13 +1,16 @@
-using Microsoft.EntityFrameworkCore;
-using System;
-using TaskManagement.Web;
-using TaskManagement.Infrastructure.Data;
-using TaskManagement.Application.Automappr;
-using TaskManagement.Domain.Interfaces;
-using TaskManagement.Infrastructure.Utilities;
-using TaskManagement.Infrastructure.Repositories;
-using TaskManagement.Application.Services;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using System;
+using TaskManagement.Application.Automappr;
+using TaskManagement.Application.Model;
+using TaskManagement.Application.Services;
+using TaskManagement.Domain.Interfaces;
+using TaskManagement.Infrastructure.Data;
+using TaskManagement.Infrastructure.Repositories;
+using TaskManagement.Infrastructure.Utilities;
+using TaskManagement.Web;
 var builder = WebApplication.CreateBuilder(args);
  // REQUIRED for JsonPatch
 
@@ -25,6 +28,7 @@ builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 // Adding dependency injection for Services
 builder.Services.AddScoped<ITaskService, TaskService>();
  builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TaskContext") ?? throw new InvalidOperationException("Connection string 'MvcMovieContext' not found.")));
@@ -55,9 +59,14 @@ builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 });
 
+//adding persist Data protection key 
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\Keys"))
+    .SetApplicationName("TaskManagementSystem");
 
-
-
+// Adding cloudinary configuration 
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddControllersWithViews();
 
 
@@ -72,7 +81,11 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(@"C:\Deploy\TaskManagementSystem\wwwroot\uploads"),
+//    RequestPath = "/uploads"
+//});
 app.UseHttpsRedirection();
 app.UseRouting();
 // 3. Enable the session middleware
