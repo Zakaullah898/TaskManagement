@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace TaskManagement.Application.Services
         private readonly IConfiguration? _configuration;
         private readonly ITaskManagementRepo<UserProfile> _UserProfileRepo;
         private readonly ITaskManagementRepo<AppUser> _AppUserRepo;
+
 
         public UserProfileService(
             IConfiguration? configuration,
@@ -58,7 +60,7 @@ namespace TaskManagement.Application.Services
             }
 
             // Return absolute URL
-            return $"{baseUrl}/{folder}/{uniqueFileName}";
+            return $"{folder}/{uniqueFileName}";
         }
 
 
@@ -114,7 +116,12 @@ namespace TaskManagement.Application.Services
             var userProfile = await _UserProfileRepo.GetAsync(u => u.UserId == userId);
             if (userProfile == null) 
             {
-                throw new KeyNotFoundException($"Not found User profile with this user id {userId}");
+               var profile = new UserProfile
+                {
+                    UserId = userId,
+                    ProfileImagePath = "/images/default/default-profile.png"
+                };
+                return profile;
             }
             return userProfile;
         }
