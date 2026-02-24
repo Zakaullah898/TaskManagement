@@ -1,0 +1,136 @@
+﻿@model IEnumerable<TaskManagement.Application.DTOs.TaskTableDTO>
+
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+    var createdTasks = Model.Count();
+    var pendingTasks = Model.Count(t => t.Status == "OnHold" && !t.IsDeleted);
+    var inProgressTasks = Model.Count(t => t.Status == "InProgress" && !t.IsDeleted);
+    var completedTasks = Model.Count(t => t.Status == "Completed" && !t.IsDeleted);
+    var inactiveTasks = Model.Count(t => t.IsDeleted);
+    var activeTasks = Model.Count(t => !t.IsDeleted);
+    var assignedTasks = Model.Count(t => !t.IsDeleted && t.AssignedToUserName != null);
+    var totalTasks = createdTasks + 5;
+
+}
+
+<h2 class="text-center fs-5 fw-bold">Task Analysis Dashboard</h2>
+
+<div class="row text-center mt-3 p-2 p-md-3 g-3">
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+        <div class="card bg-info text-white p-3 h-100 shadow-sm">
+            <div class="card-title-sm">Active Tasks</div>
+            <div class="card-value-lg">@activeTasks</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+        <div class="card bg-danger text-white p-3 h-100 shadow-sm">
+            <div class="card-title-sm">On Hold</div>
+            <div class="card-value-lg">@pendingTasks</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+        <div class="card bg-warning text-dark p-3 h-100 shadow-sm">
+            <div class="card-title-sm">In Progress</div>
+            <div class="card-value-lg">@inProgressTasks</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+        <div class="card bg-success text-white p-3 h-100 shadow-sm">
+            <div class="card-title-sm">Completed Tasks</div>
+            <div class="card-value-lg">@completedTasks</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+        <div class="card bg-secondary text-white p-3 h-100 shadow-sm">
+            <div class="card-title-sm">Inactive Tasks</div>
+            <div class="card-value-lg">@inactiveTasks</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+        <div class="card text-white p-3 h-100 shadow-sm" style="background-color: #6f42c1;">
+            <div class="card-title-sm">Total Assigned</div>
+            <div class="card-value-lg">@assignedTasks</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bar Chart -->
+<div class="mt-2 task-graph">
+    <canvas id="tasksChart"></canvas>
+</div>
+
+
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+     const dataSet = [@activeTasks, @pendingTasks, @inProgressTasks, @completedTasks, @inactiveTasks,@assignedTasks];
+     const totalTasks = @totalTasks; // Total tasks for scaling the Y-axis
+     const createdTasks = @createdTasks; // Total created tasks for the chart title 
+    const ctx = document.getElementById('tasksChart').getContext('2d');
+    const tasksChart = new Chart(ctx, {
+        type: 'bar', // Can change to 'pie', 'doughnut', etc.
+        data: {
+            labels: ['Active', 'Pending', 'InProgress', 'Completed', 'Inactive','Assigned Tasks'],
+            datasets: [{
+                label: `Total Tasks ${createdTasks}`,
+                data: dataSet, // Replace with dynamic Razor data if needed
+                backgroundColor: [
+                    'rgb(21, 129, 191)',
+                    'rgb(255, 112, 112)',
+                    'rgb(252, 198, 29)',
+                    'rgb(108, 166, 81)',
+                    'rgba(201, 203, 207, 0.7)',
+                    'rgba(153, 102, 255, 0.7)'
+                ],
+                borderColor: [
+                    'rgb(21, 129, 191)',
+                    'rgb(255, 112, 112)',
+                    'rgb(252, 198, 29)',
+                    'rgb(108, 166, 81)',
+                    'rgba(201, 203, 207, 1)',
+                    'rgba(153, 102, 255, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,        // Make chart responsive
+            maintainAspectRatio: false, // Allows chart to fill parent div
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Task Status Overview' }
+            },
+            scales: {
+                y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1,       // Smaller increments between numbers
+                    font: { size: 12 } // Smaller font for Y-axis numbers
+                },
+                grid: {
+                    drawTicks: false,  // Optional: hide tick marks
+                    drawOnChartArea: true
+                },
+                max: totalTasks // Set max to total tasks for better scaling
+                },
+                x: {
+                ticks: {
+                    font: { size: 12 } // Smaller font for X-axis labels
+                },
+                grid: {
+                    drawTicks: false
+                }
+            }
+            }
+        }
+    });
+</script>
+

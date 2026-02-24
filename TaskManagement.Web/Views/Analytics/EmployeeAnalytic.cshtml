@@ -1,0 +1,136 @@
+﻿@model IEnumerable<TaskManagement.Application.DTOs.TaskTableDTO>
+
+@{
+    var currentUser = User.Identity?.Name;
+    var isAdminOrManager = User.IsInRole("Admin") || User.IsInRole("Manager");
+
+    var visibleTasks = Model
+        .Where(t => !t.IsDeleted &&
+               (t.AssignedToUserName == currentUser ||
+               (t.AssignedToUserName != null && isAdminOrManager)))
+        .ToList();
+    var inProgressTasks = visibleTasks.Count(t => t.Status == "InProgress");
+    var completedTasks = visibleTasks.Count(t => t.Status == "Completed" );
+    var assignedTasks = visibleTasks.Count();
+    var totalAssignedTask = assignedTasks + 5;
+}
+
+<h2 class="text-center fw-bold mb-3">Employee Task Analytics</h2>
+
+<div class="row g-4 mt-5">
+
+    <!-- BAR CHART -->
+    <div class="col-12 col-lg-6">
+        <div class="card p-3 shadow-sm h-100">
+            <h6 class="text-center fw-semibold">Task Summary</h6>
+            <div class="chart-container">
+                <canvas id="employeeBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- LINE CHART -->
+    <div class="col-12 col-lg-6">
+        <div class="card p-3 shadow-sm h-100">
+            <h6 class="text-center fw-semibold">Task Progress Timeline</h6>
+            <div class="chart-container">
+                <canvas id="employeeLineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    const totalAssignedTask = @totalAssignedTask;
+    const barCtx = document.getElementById('employeeBarChart');
+
+
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Tasks'],
+            datasets: [
+                {
+                    label: 'Assigned',
+                    data: [@assignedTasks],
+                    backgroundColor: '#6f42c1',
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.6
+                },
+                {
+                    label: 'Completed',
+                    data: [@completedTasks],
+                    backgroundColor: '#198754',
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.6
+                },
+                {
+                    label: 'In Progress',
+                    data: [@inProgressTasks],
+                    backgroundColor: '#ffc107',
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    max : totalAssignedTask
+                }
+            }
+        }
+    });
+
+    // for AnimationTimeline Chart
+        const lineCtx = document.getElementById('employeeLineChart');
+
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            datasets: [
+                {
+                    label: 'Assigned',
+                    data: [2, 4, 3, 5, 6],
+                    borderColor: '#6f42c1',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Completed',
+                    data: [1, 2, 2, 3, 5],
+                    borderColor: '#198754',
+                    tension: 0.4,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+</script>

@@ -14,14 +14,31 @@
         @if (User.IsInRole("Manager"))
         {
             <li class="nav-item">
-                <a  class="nav-link link-dark" asp-controller="Dashboard" asp-action="AdminDashboard" id="dashboard">
+                <a class="nav-link link-dark" asp-controller="Dashboard" asp-action="AdminDashboard" id="dashboard">
                     <i class="bi bi-speedometer2 me-2"></i>
                     <span class="sidebar-text">Dashboard</span>
                 </a>
             </li>
+
+            <!-- Analytics Section -->
+            <li class="nav-item">
+                <a class="nav-link link-dark" asp-controller="Analytics" asp-action="Index" id="analytics">
+                    <i class="bi bi-bar-chart-line me-2"></i>  <!-- Bootstrap icon for Analytics -->
+                    <span class="sidebar-text">Analytics</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole("Employee"))
+        {
+            <!-- Analytics Section For Employee -->
+            <li class="nav-item">
+                <a class="nav-link link-dark" asp-controller="Analytics" asp-action="EmployeeAnalytic" id="analytics">
+                    <i class="bi bi-bar-chart-line me-2"></i>  <!-- Bootstrap icon for Analytics -->
+                    <span class="sidebar-text">Employee Analytics</span>
+                </a>
+            </li>
         }
 
-      
     </ul>
 
 </div>
